@@ -302,8 +302,6 @@ class SettingsCatalogTest {
             listOf(
                 "Default Finance filter",
                 "Source code",
-                "Paypal",
-                "UPI",
                 "Back up settings",
                 "Restore settings",
                 // Messages section, right after Archived: the recycle bin
@@ -498,8 +496,7 @@ class SettingsCatalogTest {
 
     // ---- Support section (renamed from Donate) ---------------------------
 
-    private fun supportRows() =
-        visibleSettingsItems(everythingOn).filter { it.section == SettingsSection.DONATE }
+    private fun supportRows() = visibleSettingsItems(everythingOn).filter { it.section == SettingsSection.DONATE }
 
     @Test
     fun `the section is labelled Support, keeps the DONATE route identity, and nothing still says Donate`() {
@@ -556,7 +553,7 @@ class SettingsCatalogTest {
         assertThat(sourceBranch).contains("R.string.url_source_code")
         // The resource is the repository, and it resolves through ExternalLinks
         // like every other link row (snackbar, not crash, when nothing handles it).
-        assertThat(context.getString(R.string.url_source_code)).isEqualTo("https://github.com/itsluminous/ClearSMS")
+        assertThat(context.getString(R.string.url_source_code)).isEqualTo("https://github.com/chatRG/sift")
         assertThat(context.resources.getIdentifier("url_star_on_github", "string", context.packageName)).isEqualTo(0)
     }
 

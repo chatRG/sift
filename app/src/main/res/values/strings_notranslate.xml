@@ -10,6 +10,6 @@
     <string name="app_name" translatable="false">Sift</string>
 
     <!-- Links opened from Settings → About / Support. -->
-    <string name="url_source_code" translatable="false">https://github.com/itsluminous/ClearSMS</string>
-    <string name="url_release_notes" translatable="false">https://github.com/itsluminous/ClearSMS/releases</string>
+    <string name="url_source_code" translatable="false">https://github.com/chatRG/sift</string>
+    <string name="url_release_notes" translatable="false">https://github.com/chatRG/sift/releases</string>
 </resources>

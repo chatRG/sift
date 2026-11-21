@@ -28,8 +28,8 @@ import app.clearsms.data.repository.MessageRepository
 import app.clearsms.data.repository.MessageRepositoryImpl
 import app.clearsms.data.repository.RuleRepository
 import app.clearsms.data.repository.RuleRepositoryImpl
-import app.clearsms.data.repository.SpamReporting
 import app.clearsms.data.repository.SpamReporter
+import app.clearsms.data.repository.SpamReporting
 import app.clearsms.data.repository.UndoManager
 import app.clearsms.data.rules.BundledRuleLoader
 import app.clearsms.data.rules.RuleEngine

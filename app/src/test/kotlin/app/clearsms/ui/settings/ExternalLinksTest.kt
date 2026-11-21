@@ -28,15 +28,15 @@ class ExternalLinksTest {
     fun `source code row builds a browser view intent from the string resource`() {
         val intent = ExternalLinks.intent(context.getString(R.string.url_source_code))
         assertThat(intent.action).isEqualTo(Intent.ACTION_VIEW)
-        assertThat(intent.dataString).isEqualTo("https://github.com/itsluminous/ClearSMS")
+        assertThat(intent.dataString).isEqualTo("https://github.com/chatRG/sift")
     }
 
     @Test
     fun `version row builds the release notes url from the build versionName`() {
         val url = context.getString(R.string.url_release_notes, BuildConfig.VERSION_NAME)
-        assertThat(url)
-            .isEqualTo("https://github.com/itsluminous/ClearSMS/releases/tag/v${BuildConfig.VERSION_NAME}")
-        // The placeholder must be fully consumed - never a literal %1$s in the link.
+        // The fork has no tagged releases yet, so the row opens the releases
+        // page; the placeholder must still be fully consumed if one is added.
+        assertThat(url).isEqualTo("https://github.com/chatRG/sift/releases")
         assertThat(url).doesNotContain("%")
         assertThat(BuildConfig.VERSION_NAME).isNotEmpty()
     }

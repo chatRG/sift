@@ -122,11 +122,11 @@ class RecategorizeWorkerTest {
 
             override suspend fun deleteOtpOlderThan(cutoffMs: Long): Int = 0
 
-        override suspend fun spamMessageIds(): List<Long> = emptyList()
+            override suspend fun spamMessageIds(): List<Long> = emptyList()
 
-        override suspend fun emptySpam(): Int = 0
+            override suspend fun emptySpam(): Int = 0
 
-        override fun observeCategoryCount(category: Category): Flow<Int> = emptyFlow()
+            override fun observeCategoryCount(category: Category): Flow<Int> = emptyFlow()
 
             override suspend fun positionInThread(
                 threadId: Long,

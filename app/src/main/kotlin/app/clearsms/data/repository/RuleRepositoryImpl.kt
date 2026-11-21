@@ -46,6 +46,7 @@ class RuleRepositoryImpl(
         ruleDao.deleteById(id)
         rulesChanged()
     }
+
     override suspend fun restoreParkedRule(
         definition: RuleDefinition,
         source: String,

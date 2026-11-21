@@ -260,9 +260,7 @@ data class SettingsVisibility(
  * "Sending delay" is meaningless while "Delay before sending" is off, so it
  * is hidden the same way. Every other row is untouched.
  */
-fun visibleSettingsItems(
-    visibility: SettingsVisibility,
-): List<SettingsItem> =
+fun visibleSettingsItems(visibility: SettingsVisibility): List<SettingsItem> =
     SettingsItem.entries.filter { item ->
         when (item.section) {
             SettingsSection.INBOX -> visibility.sections.inbox || item == SettingsItem.SHOW_INBOX_TAB

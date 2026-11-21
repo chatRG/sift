@@ -57,11 +57,9 @@ class OtpAutoDeleteWorkerTest {
                         appContext: Context,
                         workerClassName: String,
                         workerParameters: WorkerParameters,
-                    ): ListenableWorker =
-                        OtpAutoDeleteWorker(appContext, workerParameters, fakeRepository, fakeSettings)
+                    ): ListenableWorker = OtpAutoDeleteWorker(appContext, workerParameters, fakeRepository, fakeSettings)
                 },
-            )
-            .build()
+            ).build()
 
     @Test
     fun `auto-delete goes through the repository so the provider is purged`() =

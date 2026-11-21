@@ -18,8 +18,8 @@ import app.clearsms.domain.model.InboxPill
 import app.clearsms.domain.model.MessageSortOrder
 import app.clearsms.sms.ContactsSource
 import app.clearsms.testing.FakeMessageRepository
-import app.clearsms.testing.FakeSpamReporting
 import app.clearsms.testing.FakeSettingsRepository
+import app.clearsms.testing.FakeSpamReporting
 import app.clearsms.testing.InMemoryPreferencesDataStore
 import app.clearsms.testing.ViewModelDatabaseFixture
 import app.clearsms.work.CatchUpSyncScheduler

@@ -126,14 +126,21 @@ class SenderBlockerTest {
         }
 
     @Test
-    fun `blocking with the bin off drops the existing conversation outright`() =
+    fun `blocking with the bin off still bins the conversation instead of destroying it`() =
         runBlocking<Unit> {
             binEnabled = false
             repository.ingestIncoming("VM-JIOPAY", "offer", 1_000L)
 
             blocker.block("VM-JIOPAY")
 
-            assertThat(db.messageDao().getAll()).isEmpty()
+            // Blocking is not a delete: even with the recycle bin switched
+            // off, the conversation is KEPT (in the bin) rather than
+            // hard-deleted from the app and the system SMS store. Upstream
+            // #159 was exactly this data-loss path.
+            val rows = db.messageDao().getAll()
+            assertThat(rows).hasSize(1)
+            assertThat(rows.single().deletedAt).isNotNull()
+            assertThat(repository.observeBin().first()).hasSize(1)
             assertThat(settings.blockedSenders.first()).containsExactly("JIOPAY")
         }
 

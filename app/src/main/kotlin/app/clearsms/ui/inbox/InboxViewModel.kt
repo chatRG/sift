@@ -224,13 +224,18 @@ data class MuteUiEvent(
 /** One-shot outcomes of the spam actions. */
 sealed interface SpamUiEvent {
     /** [sender] was filed as spam; [mixedTraffic] drives the honest copy. */
-    data class Reported(val sender: String, val mixedTraffic: Boolean) : SpamUiEvent
+    data class Reported(
+        val sender: String,
+        val mixedTraffic: Boolean,
+    ) : SpamUiEvent
 
     /** The sender was removed from Spam. */
     data object Cleared : SpamUiEvent
 
     /** [count] Spam messages were deleted permanently. */
-    data class Emptied(val count: Int) : SpamUiEvent
+    data class Emptied(
+        val count: Int,
+    ) : SpamUiEvent
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

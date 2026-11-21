@@ -105,7 +105,8 @@ class InboxPillConfigTest {
     fun `guard - a visible pill and the all view pass through unchanged`() {
         val visible = InboxPillConfig(hidden = setOf(InboxPill.IMPORTANT)).visible
         val personal = InboxFilterState(pill = InboxPill.PERSONAL)
-        assertThat(personal.constrainedTo(visible)).isEqualTo(personal)
+        // A visible pill passes through; only the derived Spam exclusion is set.
+        assertThat(personal.constrainedTo(visible)).isEqualTo(personal.copy(excludeSpam = true))
         // The Spam pill is visible, so the unfiltered view excludes plain spam.
         assertThat(InboxFilterState().constrainedTo(visible)).isEqualTo(InboxFilterState(excludeSpam = true))
     }
@@ -125,8 +126,8 @@ class InboxPillConfigTest {
         val hiddenSwitch = filter.constrainedTo(visible, unreadControl = false)
         assertThat(hiddenSwitch.unreadOnly).isFalse()
         assertThat(hiddenSwitch.pill).isEqualTo(InboxPill.OTP)
-        // With the switch shown the flag is untouched.
-        assertThat(filter.constrainedTo(visible, unreadControl = true)).isEqualTo(filter)
+        // With the switch shown only the derived Spam exclusion changes.
+        assertThat(filter.constrainedTo(visible, unreadControl = true)).isEqualTo(filter.copy(excludeSpam = true))
     }
 
     @Test

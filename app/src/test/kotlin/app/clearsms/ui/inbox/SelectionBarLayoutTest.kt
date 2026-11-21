@@ -87,8 +87,9 @@ class SelectionBarLayoutTest {
         val muted = SelectionBarLayout.overflowActions(allSelectedPinned = false, singleThread = true, singleThreadMuted = true)
         assertThat(muted).contains(SelectionAction.UNMUTE)
         assertThat(muted).doesNotContain(SelectionAction.MUTE)
-        // Same slot, same neighbours: only the label flips.
-        assertThat(muted.indexOf(SelectionAction.UNMUTE)).isEqualTo(muted.indexOf(SelectionAction.BLOCK) - 1)
+        // Same slot, same neighbours: only the label flips (Report spam now
+        // sits between the mute toggle and Block).
+        assertThat(muted.indexOf(SelectionAction.UNMUTE)).isEqualTo(muted.indexOf(SelectionAction.REPORT_SPAM) - 1)
     }
 
     @Test

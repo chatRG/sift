@@ -205,15 +205,21 @@ fun InboxScreen(
         viewModel.spamEventFlow.collect { event ->
             val message =
                 when (event) {
-                    is SpamUiEvent.Reported ->
+                    is SpamUiEvent.Reported -> {
                         if (event.mixedTraffic) {
                             String.format(spamReportedMixedMessage, event.sender)
                         } else {
                             spamReportedMessage
                         }
+                    }
 
-                    SpamUiEvent.Cleared -> spamClearedMessage
-                    is SpamUiEvent.Emptied -> resources.getQuantityString(R.plurals.spam_emptied, event.count, event.count)
+                    SpamUiEvent.Cleared -> {
+                        spamClearedMessage
+                    }
+
+                    is SpamUiEvent.Emptied -> {
+                        resources.getQuantityString(R.plurals.spam_emptied, event.count, event.count)
+                    }
                 }
             snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Short)
         }
