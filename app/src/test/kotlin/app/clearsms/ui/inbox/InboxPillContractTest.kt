@@ -24,7 +24,7 @@ class InboxPillContractTest {
         assertThat(inbox).contains("selected = filter.pill == pill,")
         assertThat(inbox).contains("onClick = { onSelectPill(pill) },")
         // Built-in names only: renaming was dropped before it shipped.
-        assertThat(inbox).contains("label = { Text(pill.defaultLabel()) },")
+        assertThat(inbox).contains("label = pill.defaultLabel(),")
         assertThat(inbox).doesNotContain("Category.entries.toList()")
     }
 
@@ -60,15 +60,17 @@ class InboxPillContractTest {
         // The pager's query key is derived from the effective filter (see InboxPagerContractTest).
         assertThat(vm).contains("inboxPagerKeys(effectiveFilter, settings.messageSortOrder)")
         assertThat(vm).contains("val current = effectiveFilter.first()")
-        assertThat(vm).contains(".pagedInbox(key.category, key.unreadOnly, key.sortOrder)")
-        assertThat(vm).contains("messageRepository.inboxThreadIds(current.category, current.unreadOnly)")
+        assertThat(vm).contains(".pagedInbox(key.category, key.unreadOnly, key.sortOrder, key.excludeSpam)")
+        assertThat(vm).contains("messageRepository.inboxThreadIds(current.category, current.unreadOnly, current.excludeSpam)")
     }
 
     @Test
     fun `the spam pill is a real category, and the DAO has no scam-flag filter left`() {
         val dao = source("data/db/MessageDao.kt")
         assertThat(dao).doesNotContain("scamOnly")
-        assertThat(dao).doesNotContain("m.subCategory = 'SCAM'")
+        // The quarantine carve-out is the ONLY SCAM reference allowed: it keeps
+        // scam-flagged rows visible in All. It is not a filter option.
+        assertThat(dao).contains("OR m.subCategory = 'SCAM'")
         assertThat(InboxPill.SPAM.category).isEqualTo(Category.SPAM)
         // The pill shows its category's label - the "Spam" string resource, translated per language.
         assertThat(InboxPill.SPAM.labelRes()).isEqualTo(R.string.category_spam)

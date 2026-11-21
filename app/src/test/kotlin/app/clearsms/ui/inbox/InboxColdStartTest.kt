@@ -234,7 +234,7 @@ class InboxColdStartTest {
                 expectNoEvents()
                 settingsArrive(defaultFilter = Category.PERSONAL)
                 advanceUntilIdle()
-                assertThat(awaitItem()).isEqualTo(InboxPagerKey(Category.PERSONAL, false, MessageSortOrder.RECEIVED))
+                assertThat(awaitItem()).isEqualTo(InboxPagerKey(Category.PERSONAL, false, MessageSortOrder.RECEIVED, excludeSpam = true))
                 expectNoEvents()
             }
         }

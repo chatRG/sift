@@ -20,13 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -47,8 +45,6 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -63,6 +59,7 @@ import app.clearsms.ui.common.rememberDisplayLocale
 import app.clearsms.ui.components.AvatarDefaults
 import app.clearsms.ui.components.EmptyState
 import app.clearsms.ui.components.SenderAvatar
+import app.clearsms.ui.components.SiftTab
 import app.clearsms.ui.components.SwipeDismissSnackbarHost
 import app.clearsms.ui.finance.reminderGlyph
 import app.clearsms.ui.navigation.PillConfig
@@ -155,7 +152,7 @@ fun AlertsScreen(
                     richAvatars = state.showRichAvatars,
                     onOpen = { openReminder(reminder) },
                     onDismiss = { viewModel.dismiss(reminder.id) },
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 )
             }
             if (state.past.isNotEmpty()) {
@@ -179,7 +176,7 @@ fun AlertsScreen(
                             onDismiss = { viewModel.dismiss(reminder.id) },
                             onRestore = { viewModel.restore(reminder.id) },
                             onDelete = { viewModel.deleteForever(reminder.id) },
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                             past = true,
                         )
                     }
@@ -235,31 +232,22 @@ private fun AlertsPillRow(
     onSelect: (AlertFilter) -> Unit,
 ) {
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         items(state.pills.visible, key = { it.name }) { option ->
             val label = option.displayName()
             val count = state.counts[option] ?: 0
             val description =
                 pluralStringResource(R.plurals.alerts_filter_pill_reminders, count, label, count)
-            FilterChip(
+            SiftTab(
+                label = label,
+                count = count,
                 selected = state.filter == option,
                 onClick = { onSelect(option) },
-                label = { Text(label) },
-                trailingIcon =
-                    if (count > 0) {
-                        { Badge { Text(count.toString()) } }
-                    } else {
-                        null
-                    },
-                modifier =
-                    Modifier
-                        // No explicit height: M3 chips are 32dp tall and already
-                        // expand their touch target to the 48dp minimum, so forcing
-                        // a taller height here made this row inconsistent with the
-                        // Inbox and Finance chip rows.
-                        .semantics { contentDescription = description },
+                // The tab's own label + count already read as one phrase;
+                // the plural form says what the number counts.
+                contentDescription = description,
             )
         }
     }
@@ -319,7 +307,7 @@ private fun ReminderCard(
     onDelete: (() -> Unit)? = null,
     past: Boolean = false,
 ) {
-    ElevatedCard(
+    OutlinedCard(
         modifier =
             modifier.fillMaxWidth().clickable(
                 onClickLabel = stringResource(R.string.finance_open_source_sms),
@@ -371,7 +359,7 @@ private fun ReminderCard(
             }
             if (!delivery) {
                 reminder.accountLast4?.let {
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.finance_masked_account, it),
                         style = MaterialTheme.typography.bodySmall,
@@ -428,8 +416,8 @@ private fun ReminderCard(
                                 .format(Instant.ofEpochMilli(dueMs).atZone(ZoneId.systemDefault())),
                         ),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (past) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Medium,
+                    color = if (past) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
                 )
             }
             if (past) {
@@ -473,8 +461,8 @@ internal fun AlertFilter.displayName(): String =
 @Composable
 private fun TypeBadge(type: ReminderType) {
     Surface(
-        shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        shape = MaterialTheme.shapes.extraSmall,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
     ) {
         Text(
             text =
@@ -488,9 +476,9 @@ private fun TypeBadge(type: ReminderType) {
                     ReminderType.TRAVEL -> stringResource(R.string.alerts_type_travel)
                     ReminderType.OTHER -> stringResource(R.string.alerts_type_other)
                 },
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         )
     }
 }

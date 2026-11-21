@@ -44,7 +44,7 @@ class InboxPagerContractTest {
         assertThat(pager).doesNotContain("contactsTick")
         assertThat(pager).doesNotContain("uiState")
         // The query is read from the key, never from a captured flow value.
-        assertThat(pager).contains("pagedInbox(key.category, key.unreadOnly, key.sortOrder)")
+        assertThat(pager).contains("pagedInbox(key.category, key.unreadOnly, key.sortOrder, key.excludeSpam)")
     }
 
     @Test

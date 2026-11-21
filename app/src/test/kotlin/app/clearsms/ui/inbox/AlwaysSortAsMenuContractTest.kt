@@ -37,9 +37,11 @@ class AlwaysSortAsMenuContractTest {
             .containsExactly(
                 SelectionAction.PIN,
                 SelectionAction.SELECT_ALL,
-                // Mute (the per-sender notification toggle) joined the
-                // single-thread group in front of Block; Always sort as… stays last.
+                // Mute (the per-sender notification toggle) and the
+                // reversible Report spam precede the destructive Block;
+                // Always sort as… stays last.
                 SelectionAction.MUTE,
+                SelectionAction.REPORT_SPAM,
                 SelectionAction.BLOCK,
                 SelectionAction.ALWAYS_SORT_AS,
             ).inOrder()
@@ -78,7 +80,10 @@ class AlwaysSortAsMenuContractTest {
         val dialogDefinitions = mainSources().count { "fun SenderRuleDialog(" in it.readText() }
         assertThat(dialogDefinitions).isEqualTo(1)
         val savers = mainSources().filter { "SenderRule.definition(" in it.readText() }.map { it.name }.toList()
-        assertThat(savers).containsExactly("SenderRuleViewModel.kt")
+        // Exactly two sanctioned writers: the shared "Always sort as…" dialog
+        // and the spam reporter (Report spam / Not spam write the same kind
+        // of sender rule by design - no third path may appear).
+        assertThat(savers).containsExactly("SenderRuleViewModel.kt", "SpamReporter.kt")
         // Both entry points (inbox and conversation) open that same dialog.
         assertThat(source("ui/conversation/ConversationScreen.kt")).contains("SenderRuleDialog(")
     }

@@ -1253,11 +1253,14 @@ private fun MessageBubble(
             item.outgoing -> MaterialTheme.colorScheme.primaryContainer
             else -> MaterialTheme.colorScheme.surfaceVariant
         }
+    // Incoming body text is the message itself: primary text on the quiet
+    // surface, not the muted role reserved for metadata. The old
+    // onSurfaceVariant made every received message read like a caption.
     val textColor =
         when {
             selected -> MaterialTheme.colorScheme.onSecondaryContainer
             item.outgoing -> MaterialTheme.colorScheme.onPrimaryContainer
-            else -> MaterialTheme.colorScheme.onSurfaceVariant
+            else -> MaterialTheme.colorScheme.onSurface
         }
 
     // Background behind the opened message. The screen holds `highlighted`
@@ -1289,7 +1292,7 @@ private fun MessageBubble(
             Modifier
                 .fillMaxWidth()
                 .background(rowColor)
-                .padding(horizontal = 16.dp, vertical = 3.dp),
+                .padding(horizontal = 16.dp, vertical = 4.dp),
         contentAlignment = alignment,
     ) {
         // ALWAYS-visible in-app twin of the OTP notification's Copy action

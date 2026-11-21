@@ -42,12 +42,11 @@ import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material.icons.outlined.SelectAll
-import androidx.compose.material3.Badge
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
@@ -107,6 +106,7 @@ import app.clearsms.ui.components.OtpBanner
 import app.clearsms.ui.components.PagedRowPlaceholder
 import app.clearsms.ui.components.SelectionState
 import app.clearsms.ui.components.SenderAvatar
+import app.clearsms.ui.components.SiftTab
 import app.clearsms.ui.components.SwipeDismissSnackbarHost
 import app.clearsms.ui.components.SwipeableMessageItem
 import app.clearsms.ui.components.TooltipIconButton
@@ -397,7 +397,10 @@ fun InboxScreen(
             // In a short window there is no FAB at all - the compose action
             // is in the app bar above (InboxFabPlacement).
             if (!selection.active && !snackbarShowing && fabPlacement == FabPlacement.FLOATING) {
-                FloatingActionButton(onClick = onCompose) {
+                FloatingActionButton(
+                    onClick = onCompose,
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp),
+                ) {
                     Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.action_compose))
                 }
             }
@@ -969,21 +972,16 @@ private fun FilterChipRow(
     onSelectPill: (InboxPill) -> Unit,
 ) {
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         items(pills.visible, key = { it.name }) { pill ->
             val count = pill.category?.let { unreadCounts[it] } ?: 0
-            FilterChip(
+            SiftTab(
+                label = pill.defaultLabel(),
+                count = count,
                 selected = filter.pill == pill,
                 onClick = { onSelectPill(pill) },
-                label = { Text(pill.defaultLabel()) },
-                trailingIcon =
-                    if (count > 0) {
-                        { Badge { Text(count.toString()) } }
-                    } else {
-                        null
-                    },
             )
         }
     }
@@ -1090,26 +1088,21 @@ private fun InboxRow(
                         Icon(
                             Icons.Outlined.PushPin,
                             contentDescription = stringResource(R.string.inbox_pinned),
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(14.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.width(4.dp))
                     }
                     Text(
                         text = item.timeLabel,
                         style = MaterialTheme.typography.labelMedium,
-                        color =
-                            if (unread) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 if (unread) {
-                    Spacer(Modifier.height(6.dp))
+                    Spacer(Modifier.height(8.dp))
                     Surface(
-                        modifier = Modifier.size(10.dp),
+                        modifier = Modifier.size(8.dp),
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primary,
                     ) {}

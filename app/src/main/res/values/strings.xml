@@ -54,7 +54,7 @@
     <!-- Inbox -->
     <string name="inbox_empty_title">No messages yet</string>
     <string name="inbox_empty_subtitle">Incoming SMS will appear here, automatically organized into categories.</string>
-    <string name="inbox_empty_filtered">Nothing here for this filter.</string>
+    <string name="inbox_empty_filtered">Nothing under this filter</string>
     <string name="inbox_row_actions">Message actions</string>
     <string name="inbox_draft_preview">Draft: %1$s</string>
     <string name="inbox_pinned">Pinned</string>
@@ -285,8 +285,8 @@
     <string name="rule_wizard_test_invalid">Invalid pattern: %1$s</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_welcome_title">Welcome to Sift</string>
-    <string name="onboarding_welcome_body">Your inbox, organized. Messages are categorized, transactions tracked and OTPs surfaced - entirely on this device. No servers, no ads, no tracking.</string>
+    <string name="onboarding_welcome_title">Every message, in its place</string>
+    <string name="onboarding_welcome_body">Sift sorts each message into a tray you can read: Important, Promotional, Personal, OTP, Unknown or Spam. Bank alerts become a spending view, and codes stay out of the way. All of it on this phone.</string>
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_permissions_title">Permissions</string>
     <string name="onboarding_permissions_body">Sift needs SMS access to organize your messages, and contacts access to recognize people you know. Nothing ever leaves your phone.</string>
@@ -402,7 +402,7 @@
     <string name="logo_background_none">None</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_dynamic_color">Dynamic color</string>
-    <string name="settings_dynamic_color_summary">Use colors from your wallpaper (Android 12+)</string>
+    <string name="settings_dynamic_color_summary">Take colors from your wallpaper instead of the paper palette (Android 12+)</string>
     <string name="settings_show_rich_avatars">Show logos and contact photos</string>
     <string name="settings_show_rich_avatars_on">Contact photos and sender brand marks</string>
     <string name="settings_show_rich_avatars_off">Plain icon and monogram avatars</string>

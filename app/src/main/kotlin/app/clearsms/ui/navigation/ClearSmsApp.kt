@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -362,7 +364,11 @@ private fun MainScaffold(
                 // Measured in full even while the slot around it is
                 // animating: this is the resting height the tab screens
                 // reserve (BottomBarVisibility.tabContentInset, #47).
-                NavigationBar(modifier = Modifier.onSizeChanged { settledBarHeightPx = it.height }) {
+                NavigationBar(
+                    modifier = Modifier.onSizeChanged { settledBarHeightPx = it.height },
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    tonalElevation = 0.dp,
+                ) {
                     destinations.forEach { destination ->
                         NavigationBarItem(
                             selected = currentRoute == destination.route,
@@ -373,6 +379,14 @@ private fun MainScaffold(
                                     restoreState = true
                                 }
                             },
+                            colors =
+                                NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                                    indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                ),
                             icon = {
                                 Icon(
                                     imageVector = destination.icon,

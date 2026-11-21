@@ -27,20 +27,20 @@ data class SemanticAmountColors(
     val balance: Color,
 ) {
     companion object {
-        /** Variant for light surfaces (white-ish shade and app background). */
+        /** Variant for light surfaces (paper background and white-ish shade). */
         val Light =
             SemanticAmountColors(
-                debit = Color(0xFFB3261E),
-                credit = Color(0xFF1B5E20),
-                balance = Color(0xFF0D47A1),
+                debit = Color(0xFFA33A2B),
+                credit = Color(0xFF2F6B3F),
+                balance = Color(0xFF33577D),
             )
 
-        /** Variant for dark surfaces (dark shade and app background). */
+        /** Variant for dark surfaces (ink background and dark shade). */
         val Dark =
             SemanticAmountColors(
-                debit = Color(0xFFFFB4AB),
-                credit = Color(0xFFA5D6A7),
-                balance = Color(0xFF90CAF9),
+                debit = Color(0xFFF0A79C),
+                credit = Color(0xFFA9CFA4),
+                balance = Color(0xFFA9C4E8),
             )
     }
 }

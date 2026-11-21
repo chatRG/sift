@@ -7,38 +7,51 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 /**
- * Material 3 type scale with expressive, slightly heavier headings.
- * DisplaySmall is used for OTP codes and the finance summary figure.
+ * Two families, drawn from the product's world. A serif carries titles and
+ * the large money figures - the letterpress side of a mailroom - while the
+ * system sans carries rows, labels and buttons. Both are platform families,
+ * so nothing is downloaded and every translation keeps its own script's
+ * letterforms.
+ *
+ * Weights stay at 400 and 500, with 600 only where a figure must lead. On
+ * Android the platform resolves [FontFamily.Serif] to Noto Serif (and to the
+ * matching serif for Hindi, Russian and the other shipped languages).
  */
 val ClearSmsTypography =
     Typography(
         displaySmall =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.SemiBold,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Normal,
                 fontSize = 36.sp,
                 lineHeight = 44.sp,
+                letterSpacing = 0.sp,
+                fontFeatureSettings = "tnum",
             ),
         headlineMedium =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.SemiBold,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Normal,
                 fontSize = 28.sp,
                 lineHeight = 36.sp,
+                letterSpacing = 0.sp,
             ),
         headlineSmall =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.SemiBold,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Normal,
                 fontSize = 24.sp,
                 lineHeight = 32.sp,
+                letterSpacing = 0.sp,
+                fontFeatureSettings = "tnum",
             ),
         titleLarge =
             TextStyle(
-                fontFamily = FontFamily.SansSerif,
-                fontWeight = FontWeight.SemiBold,
+                fontFamily = FontFamily.Serif,
+                fontWeight = FontWeight.Medium,
                 fontSize = 22.sp,
                 lineHeight = 28.sp,
+                letterSpacing = 0.sp,
             ),
         titleMedium =
             TextStyle(
@@ -46,7 +59,7 @@ val ClearSmsTypography =
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
-                letterSpacing = 0.15.sp,
+                letterSpacing = 0.1.sp,
             ),
         titleSmall =
             TextStyle(
@@ -62,7 +75,7 @@ val ClearSmsTypography =
                 fontWeight = FontWeight.Normal,
                 fontSize = 16.sp,
                 lineHeight = 24.sp,
-                letterSpacing = 0.5.sp,
+                letterSpacing = 0.25.sp,
             ),
         bodyMedium =
             TextStyle(
@@ -70,7 +83,7 @@ val ClearSmsTypography =
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
-                letterSpacing = 0.25.sp,
+                letterSpacing = 0.15.sp,
             ),
         labelLarge =
             TextStyle(
@@ -86,7 +99,7 @@ val ClearSmsTypography =
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.sp,
                 lineHeight = 16.sp,
-                letterSpacing = 0.5.sp,
+                letterSpacing = 0.2.sp,
             ),
         labelSmall =
             TextStyle(
@@ -94,6 +107,6 @@ val ClearSmsTypography =
                 fontWeight = FontWeight.Medium,
                 fontSize = 11.sp,
                 lineHeight = 16.sp,
-                letterSpacing = 0.5.sp,
+                letterSpacing = 0.3.sp,
             ),
     )

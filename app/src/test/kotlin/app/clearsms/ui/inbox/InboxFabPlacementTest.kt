@@ -156,7 +156,8 @@ class InboxFabPlacementTest {
     @Test
     fun `the FAB floats only when the rule says so, and still yields to a snackbar and to selection`() {
         assertThat(inbox).contains("if (!selection.active && !snackbarShowing && fabPlacement == FabPlacement.FLOATING) {")
-        assertThat(inbox).contains("FloatingActionButton(onClick = onCompose)")
+        assertThat(inbox).contains("FloatingActionButton(")
+        assertThat(inbox).contains("onClick = onCompose,")
     }
 
     @Test

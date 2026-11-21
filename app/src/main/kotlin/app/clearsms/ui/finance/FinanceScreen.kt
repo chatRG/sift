@@ -27,13 +27,10 @@ import androidx.compose.material.icons.outlined.ExpandLess
 import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.Wallet
 import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +40,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -86,6 +84,7 @@ import app.clearsms.ui.components.BrandGlyph
 import app.clearsms.ui.components.EmptyState
 import app.clearsms.ui.components.MaskedAmountText
 import app.clearsms.ui.components.SenderAvatar
+import app.clearsms.ui.components.SiftTab
 import app.clearsms.ui.components.SwipeDismissSnackbarHost
 import app.clearsms.ui.navigation.PillConfig
 import app.clearsms.ui.navigation.ScrollToTopTitle
@@ -275,19 +274,14 @@ private fun FinancePillRow(
     pills: PillConfig<FinanceTab>,
     onSelect: (FinanceTab) -> Unit,
 ) {
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
         items(pills.visible, key = { it.name }) { tab ->
             val count = counts[tab] ?: 0
-            FilterChip(
+            SiftTab(
+                label = tab.displayName(),
+                count = count,
                 selected = selected == tab,
                 onClick = { onSelect(tab) },
-                label = { Text(tab.displayName()) },
-                trailingIcon =
-                    if (count > 0) {
-                        { Badge { Text(count.toString()) } }
-                    } else {
-                        null
-                    },
             )
         }
     }
@@ -377,7 +371,7 @@ private fun BankAccountCard(
     onOpen: () -> Unit,
     onOpenSource: () -> Unit,
 ) {
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier =
                 Modifier
@@ -955,7 +949,7 @@ private fun CreditCardCard(
             UtilizationLevel.WARNING -> MaterialTheme.colorScheme.tertiary
             UtilizationLevel.DANGER -> MaterialTheme.colorScheme.error
         }
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
             Modifier
                 .fillMaxWidth()

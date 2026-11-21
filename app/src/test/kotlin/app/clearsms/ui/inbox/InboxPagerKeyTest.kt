@@ -37,7 +37,7 @@ class InboxPagerKeyTest {
                     !java.lang.reflect.Modifier
                         .isStatic(it.modifiers)
                 }.map { it.name },
-        ).containsExactly("category", "unreadOnly", "sortOrder")
+        ).containsExactly("category", "unreadOnly", "sortOrder", "excludeSpam")
     }
 
     @Test

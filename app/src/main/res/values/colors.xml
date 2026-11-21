@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Curated fallback seed palette (teal/indigo) used when Material You
-         dynamic color is unavailable (pre-Android 12). The Compose theme reads
-         these as seed colors. -->
-    <color name="seed_primary_teal">#FF006A60</color>
-    <color name="seed_secondary_indigo">#FF3F51B5</color>
-    <color name="ic_launcher_background">#FF006A60</color>
+    <!-- Sift's paper-and-ink seed: the launcher ground and the accent the
+         Compose fallback palette is built from. -->
+    <color name="ic_launcher_background">#FF2E4A6E</color>
 
     <!-- Fixed semantic amount colors (light variant). Deliberately outside
          the Material dynamic palette: debit must always read red, credit
          green and balance blue regardless of wallpaper. Dark variants live
          in values-night/colors.xml; the Compose copies are in
          ui/theme/SemanticAmountColors.kt (kept identical by a unit test). -->
-    <color name="amount_debit">#FFB3261E</color>
-    <color name="amount_credit">#FF1B5E20</color>
-    <color name="amount_balance">#FF0D47A1</color>
+    <color name="amount_debit">#FFA33A2B</color>
+    <color name="amount_credit">#FF2F6B3F</color>
+    <color name="amount_balance">#FF33577D</color>
 
     <!-- Notification amount colors: a SINGLE mid-tone per kind, identical in
          light and dark, chosen to stay legible on both the light and dark

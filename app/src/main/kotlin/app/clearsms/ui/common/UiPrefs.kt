@@ -31,7 +31,7 @@ class UiPrefs
     constructor(
         @UiSettingsDataStore private val dataStore: DataStore<Preferences>,
     ) {
-        val dynamicColor: Flow<Boolean> = dataStore.data.map { it[KEY_DYNAMIC_COLOR] ?: true }
+        val dynamicColor: Flow<Boolean> = dataStore.data.map { it[KEY_DYNAMIC_COLOR] ?: false }
 
         suspend fun setDynamicColor(value: Boolean) {
             dataStore.edit { it[KEY_DYNAMIC_COLOR] = value }

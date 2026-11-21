@@ -128,7 +128,8 @@ class TabContentInsetTest {
 
     @Test
     fun `the resting height is read off the bar itself, not a duplicated Material constant`() {
-        assertThat(shell).contains("NavigationBar(modifier = Modifier.onSizeChanged { settledBarHeightPx = it.height })")
+        assertThat(shell).contains("NavigationBar(")
+        assertThat(shell).contains("onSizeChanged { settledBarHeightPx = it.height }")
         // Survives an activity recreated on a conversation, so the first
         // back transition after it is stable too.
         assertThat(shell).contains("rememberSaveable { mutableStateOf(0) }")

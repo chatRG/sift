@@ -16,16 +16,16 @@ import java.io.File
 class SemanticAmountColorsTest {
     @Test
     fun `light variant pins the exact fixed values`() {
-        assertThat(SemanticAmountColors.Light.debit).isEqualTo(Color(0xFFB3261E))
-        assertThat(SemanticAmountColors.Light.credit).isEqualTo(Color(0xFF1B5E20))
-        assertThat(SemanticAmountColors.Light.balance).isEqualTo(Color(0xFF0D47A1))
+        assertThat(SemanticAmountColors.Light.debit).isEqualTo(Color(0xFFA33A2B))
+        assertThat(SemanticAmountColors.Light.credit).isEqualTo(Color(0xFF2F6B3F))
+        assertThat(SemanticAmountColors.Light.balance).isEqualTo(Color(0xFF33577D))
     }
 
     @Test
     fun `dark variant pins the exact fixed values`() {
-        assertThat(SemanticAmountColors.Dark.debit).isEqualTo(Color(0xFFFFB4AB))
-        assertThat(SemanticAmountColors.Dark.credit).isEqualTo(Color(0xFFA5D6A7))
-        assertThat(SemanticAmountColors.Dark.balance).isEqualTo(Color(0xFF90CAF9))
+        assertThat(SemanticAmountColors.Dark.debit).isEqualTo(Color(0xFFF0A79C))
+        assertThat(SemanticAmountColors.Dark.credit).isEqualTo(Color(0xFFA9CFA4))
+        assertThat(SemanticAmountColors.Dark.balance).isEqualTo(Color(0xFFA9C4E8))
     }
 
     @Test
@@ -33,8 +33,8 @@ class SemanticAmountColorsTest {
         val lightBackgrounds =
             listOf(
                 Color(0xFFFFFFFF), // white notification shade
-                Color(0xFFF4FBF8), // app light surface (Theme.kt fallback)
-                Color(0xFF74F8E5), // app light primaryContainer (summary card)
+                Color(0xFFFBF8F2), // app light surface (paper)
+                Color(0xFFDCE6F2), // app light primaryContainer (summary slip)
             )
         for (bg in lightBackgrounds) {
             for (color in SemanticAmountColors.Light.all()) {
@@ -48,8 +48,8 @@ class SemanticAmountColorsTest {
         val darkBackgrounds =
             listOf(
                 Color(0xFF121212), // typical dark notification shade
-                Color(0xFF0E1513), // app dark surface (Theme.kt fallback)
-                Color(0xFF005048), // app dark primaryContainer (summary card)
+                Color(0xFF17140F), // app dark surface (ink)
+                Color(0xFF294361), // app dark primaryContainer (summary slip)
             )
         for (bg in darkBackgrounds) {
             for (color in SemanticAmountColors.Dark.all()) {

@@ -142,7 +142,7 @@ class PillOrderDialogContractTest {
         assertThat(offenders).isEmpty()
         assertThat(File("src/main/kotlin/app/clearsms/domain/model/InboxPillLabels.kt").exists()).isFalse()
         // The pill row and both pill dialogs render the built-in names directly.
-        assertThat(source("ui/inbox/InboxScreen.kt")).contains("label = { Text(pill.defaultLabel()) },")
+        assertThat(source("ui/inbox/InboxScreen.kt")).contains("label = pill.defaultLabel(),")
         assertThat(settings.split("label = { it.defaultLabel() },").size - 1).isEqualTo(2)
         assertThat(source("ui/inbox/InboxPillConfig.kt")).doesNotContain("labels")
     }

@@ -47,8 +47,8 @@ fun AmountText(
         }
     Text(
         text = text,
-        style = style,
-        fontWeight = FontWeight.SemiBold,
+        style = style.copy(fontFeatureSettings = "tnum"),
+        fontWeight = FontWeight.Medium,
         color = color,
         modifier = modifier,
     )

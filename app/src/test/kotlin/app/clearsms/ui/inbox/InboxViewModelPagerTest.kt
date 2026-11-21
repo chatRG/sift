@@ -166,7 +166,7 @@ class InboxViewModelPagerTest {
             val job = collectPager(viewModel)
             viewModel.pagerKeys.test {
                 advanceUntilIdle()
-                assertThat(awaitItem()).isEqualTo(InboxPagerKey(null, false, MessageSortOrder.RECEIVED))
+                assertThat(awaitItem()).isEqualTo(InboxPagerKey(null, false, MessageSortOrder.RECEIVED, excludeSpam = true))
                 assertThat(repository.pagedInboxCalls).hasSize(1)
 
                 simulateThreadMarkedRead()
@@ -294,13 +294,13 @@ class InboxViewModelPagerTest {
 
                 viewModel.selectPill(InboxPill.of(Category.IMPORTANT))
                 advanceUntilIdle()
-                assertThat(awaitItem()).isEqualTo(InboxPagerKey(Category.IMPORTANT, false, MessageSortOrder.RECEIVED))
+                assertThat(awaitItem()).isEqualTo(InboxPagerKey(Category.IMPORTANT, false, MessageSortOrder.RECEIVED, excludeSpam = true))
                 assertThat(repository.pagedInboxCalls).hasSize(2)
                 assertThat(repository.pagedInboxCalls.last()).isEqualTo(Triple(Category.IMPORTANT, false, MessageSortOrder.RECEIVED))
 
                 sortOrders.emit(MessageSortOrder.SENT)
                 advanceUntilIdle()
-                assertThat(awaitItem()).isEqualTo(InboxPagerKey(Category.IMPORTANT, false, MessageSortOrder.SENT))
+                assertThat(awaitItem()).isEqualTo(InboxPagerKey(Category.IMPORTANT, false, MessageSortOrder.SENT, excludeSpam = true))
                 assertThat(repository.pagedInboxCalls).hasSize(3)
             }
             job.cancel()
