@@ -59,11 +59,13 @@ send() {
   sleep 2
 }
 send "VM-HDFCBK-T" "Rs.1,250.00 debited from A/c XX4821 on 21-11-26 to SWIGGY. Avl bal Rs.48,320.15 - HDFC Bank"
-send "VK-OTPSMS" "482913 is your OTP for login. Valid for 10 minutes. Do not share it with anyone."
+send "AD-ICICIB-T" "482913 is your OTP for login. Valid for 10 minutes. Do not share it with anyone."
 send "AD-SHOPPY-P" "Flat 40% off on electronics this weekend. Offer ends tonight. Shop now at https://shop.example/x1 . T&C apply."
-send "AD-LOANCO-P" "Pre-approved personal loan of Rs.5,00,000. Apply now at https://loans.example/apply or call 1800123456. T&C apply."
 send "VK-POWERCO" "Your electricity bill of Rs.1,140 has been generated. Pay before 28-11-26 to avoid a late fee."
 send "+919876543210" "Reached home safely. Will call you in the evening."
+# Sent last so it is the newest thread, which makes the long-press below land
+# on it without guessing coordinates.
+send "9000000001" "Pre-approved personal loan of Rs.5,00,000. Apply now at https://loans.example/apply or call 1800123456. T&C apply."
 sleep 4
 
 shot() {
@@ -76,14 +78,27 @@ adb shell am start -n "$ACTIVITY"
 sleep 3
 shot inbox
 
-# The Spam pill's own view, with its "Empty spam" banner.
-$TAP "Spam" --exact || true
+# Exercise the spam feature end to end: long-press the loan thread, open the
+# selection overflow and file it as spam. That is the real user path, and it
+# leaves the sender's rule in place for the Spam screenshot.
+$TAP "Pre-approved" --long || true
+sleep 2
+$TAP "More options" || true
+sleep 1
+$TAP "Report spam" || true
+sleep 3
+
+# The Spam pill sits off-screen at the end of the pill row.
+$TAP "Spam" --exact --scroll-y "Important" || true
 sleep 3
 shot spam
 
-# Finance dashboard, built from the bank SMS above.
+# Finance dashboard, built from the bank SMS above. Balances are masked by
+# default; show them first so the dashboard reads as a dashboard.
 $TAP "Finance" --exact || true
 sleep 3
+$TAP "Show balances" || true
+sleep 2
 shot finance
 
 # A conversation: the HDFC thread opened from the inbox.
