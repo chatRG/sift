@@ -36,3 +36,6 @@ __pycache__/
 adb_findings.txt
 device_corpus.jsonl
 
+# Local research notes (not part of the shipped repository)
+.research/
+

@@ -139,7 +139,8 @@ class MessageRepositoryImpl(
     override fun observeInbox(
         category: Category?,
         unreadOnly: Boolean,
-    ): Flow<List<MessageEntity>> = messageDao.observeInbox(category, unreadOnly)
+        excludeSpam: Boolean,
+    ): Flow<List<MessageEntity>> = messageDao.observeInbox(category, unreadOnly, excludeSpam)
 
     override fun observeThread(threadId: Long): Flow<List<MessageEntity>> = messageDao.observeThread(threadId)
 
@@ -147,10 +148,11 @@ class MessageRepositoryImpl(
         category: Category?,
         unreadOnly: Boolean,
         sortOrder: MessageSortOrder,
+        excludeSpam: Boolean,
     ): PagingSource<Int, InboxThreadRow> =
         when (sortOrder) {
-            MessageSortOrder.RECEIVED -> messageDao.pagingInbox(category, unreadOnly)
-            MessageSortOrder.SENT -> messageDao.pagingInboxBySent(category, unreadOnly)
+            MessageSortOrder.RECEIVED -> messageDao.pagingInbox(category, unreadOnly, excludeSpam)
+            MessageSortOrder.SENT -> messageDao.pagingInboxBySent(category, unreadOnly, excludeSpam)
         }
 
     override suspend fun draftFor(threadId: Long): String? = draftDao.forThread(threadId)?.text
@@ -203,7 +205,8 @@ class MessageRepositoryImpl(
     override suspend fun inboxThreadIds(
         category: Category?,
         unreadOnly: Boolean,
-    ): List<Long> = messageDao.inboxThreadIds(category, unreadOnly)
+        excludeSpam: Boolean,
+    ): List<Long> = messageDao.inboxThreadIds(category, unreadOnly, excludeSpam)
 
     override suspend fun messageIdsInThread(threadId: Long): List<Long> = messageDao.messageIdsInThread(threadId)
 
@@ -454,6 +457,19 @@ class MessageRepositoryImpl(
         deleteMessages(ids)
         return ids.size
     }
+
+    override suspend fun spamMessageIds(): List<Long> = messageDao.spamMessageIds()
+
+    override suspend fun emptySpam(): Int {
+        // Only live Spam rows: a scam-flagged bank alert was lifted to
+        // IMPORTANT by the categorizer's invariants and is never eligible.
+        val ids = messageDao.spamMessageIds()
+        if (ids.isEmpty()) return 0
+        deleteMessages(ids)
+        return ids.size
+    }
+
+    override fun observeCategoryCount(category: Category): Flow<Int> = messageDao.observeCategoryCount(category)
 
     override suspend fun setReadForMessages(
         ids: List<Long>,
@@ -713,7 +729,7 @@ class MessageRepositoryImpl(
         // below. Attachment rows are still written so a bin restore keeps
         // its image. Unlike SMS there is no provider-copy delete here:
         // keyword/sender blocking never touched the MMS provider.
-        val blocked = isSenderBlocked(effectiveSender)
+        val blocked = isSenderBlocked(effectiveSender) || BlockedKeywords.matches(body, blockedKeywords())
         val completed =
             database.withTransaction {
                 val row = messageDao.getById(messageId) ?: return@withTransaction null
@@ -800,7 +816,7 @@ class MessageRepositoryImpl(
         // born soft-deleted, exactly as the live path does it, so importing
         // history cannot resurrect a conversation the user blocked - a sent
         // row included, since blocking bins the whole conversation.
-        val blocked = isSenderBlocked(address)
+        val blocked = isSenderBlocked(address) || BlockedKeywords.matches(body, blockedKeywords())
         val stored =
             database.withTransaction {
                 // A group MMS is attributed to one party (its sender, or for
@@ -1152,12 +1168,21 @@ class MessageRepositoryImpl(
     ) = messageDao.setBlockedSender(SenderNormalizer.normalize(sender), blocked)
 
     override suspend fun binThreadForSender(sender: String) {
-        val threadId = messageDao.threadIdFor(SenderNormalizer.normalize(sender)) ?: return
-        // The same stage+commit pair a timed-out UI delete performs: bin on
-        // -> the thread rests in the bin (restorable); bin off -> dropped,
-        // provider copies removed either way.
-        val staged = stageDeleteThreads(listOf(threadId))
-        commitStagedDelete(staged, toBin = recycleBinEnabled())
+        val normalized = SenderNormalizer.normalize(sender)
+        if (normalized.isEmpty()) return
+        // Every live thread the sender owns, not one arbitrary row: a sender
+        // can still own a group-MMS thread beside its one-to-one thread, and
+        // binning only one would leave the rest in the inbox while all future
+        // messages were swallowed.
+        val threadIds = messageDao.threadIdsFor(normalized)
+        if (threadIds.isEmpty()) return
+        // ALWAYS to the bin. Blocking reads as "stop this sender", not "erase
+        // this conversation", so the safety net cannot depend on the user's
+        // recycle-bin preference - with the bin off this used to hard-delete
+        // the whole conversation, in the app and in the system provider, with
+        // no undo (upstream #159).
+        val staged = stageDeleteThreads(threadIds)
+        commitStagedDelete(staged, toBin = true)
     }
 
     override suspend fun legacyBlockedSenderFlags(): List<String> = messageDao.blockedSenderFlags()

@@ -66,7 +66,7 @@
     <string name="compose_attachment_size">%2$s me se %1$s</string>
     <string name="compose_attachment_schedule_sms_only">Scheduling sirf SMS ke liye hai - schedule karne ke liye attachments hatayein</string>
     <string name="compose_camera_missing">Koi camera app available nahi hai</string>
-    <string name="share_only_images">Clear SMS me sirf images share ki ja sakti hain</string>
+    <string name="share_only_images">Sift me sirf images share ki ja sakti hain</string>
     <string name="conversation_mms_failed_dialog_title">Download fail ho gaya</string>
     <string name="conversation_mms_failed_dialog_message">Yeh multimedia message download nahi ho saka. Download phir se try karein ya message delete karein.</string>
     <string name="bill_due_title">Bill kal due hai</string>
@@ -79,12 +79,12 @@
         <item quantity="one">%d naya message</item>
         <item quantity="other">%d naye messages</item>
     </plurals>
-    <string name="catch_up_summary_text">Jab Clear SMS catch up kar raha tha tab aaya</string>
+    <string name="catch_up_summary_text">Jab Sift catch up kar raha tha tab aaya</string>
     <string name="resort_title">Aapka inbox sort ho raha hai</string>
     <string name="inbox_sorting_banner">Update ke baad aapke messages phir se sort ho rahe hain…</string>
     <string name="shortcut_compose_short">Naya message</string>
     <string name="shortcut_compose_long">Naya message likhein</string>
-    <string name="shortcut_compose_disabled">Clear SMS available nahi hai</string>
-    <string name="shortcut_disabled_unavailable">Yeh conversation ab Clear SMS me available nahi hai</string>
-    <string name="shortcut_disabled_setting_off">Clear SMS settings me conversation shortcuts off hain</string>
+    <string name="shortcut_compose_disabled">Sift available nahi hai</string>
+    <string name="shortcut_disabled_unavailable">Yeh conversation ab Sift me available nahi hai</string>
+    <string name="shortcut_disabled_setting_off">Sift settings me conversation shortcuts off hain</string>
 </resources>

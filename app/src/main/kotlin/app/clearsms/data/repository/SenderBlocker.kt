@@ -24,8 +24,11 @@ import javax.inject.Singleton
  * [SettingsRepository.blockedSenders] (covered by the settings backup).
  * Every [block] additionally:
  * - updates the derived per-row `isBlockedSender` cache, and
- * - moves the sender's existing conversation to the recycle bin (or drops
- *   it when the bin is off) - the "blocked threads disappear" effect, and
+ * - moves EVERY live conversation the sender owns to the recycle bin - the
+ *   "blocked threads disappear" effect. The bin is the safety net regardless
+ *   of the user's recycle-bin preference: blocking reads as "stop this
+ *   sender", never as "erase this conversation", and a hard delete here was
+ *   an unrecoverable data-loss path (upstream #159), and
  * - clears any mute on the sender ([SenderMuter]): blocking is the stronger
  *   state and makes the mute entry meaningless.
  *

@@ -229,10 +229,9 @@ class SettingsCatalogTest {
             ).inOrder()
         assertThat(bySection["Rules"]).containsExactly("Manage rules")
         assertThat(bySection["Signature"]).containsExactly("SMS signature")
-        // The CATALOG keeps all three rows (PayPal is hidden at render time by
-        // PAYPAL_DONATION_ENABLED, see the Support tests below); the free
-        // GitHub star trails the two payment rows.
-        assertThat(bySection["Support"]).containsExactly("UPI", "Paypal", "Star on GitHub").inOrder()
+        // The CATALOG keeps only the free GitHub star: the original author's
+        // personal payment endpoints were removed from the fork.
+        assertThat(bySection["Support"]).containsExactly("Star on GitHub")
         // Permissions, Privacy policy and Licenses moved INSIDE About, after
         // the two rows that were already there; the diagnostic-log report
         // sits between them, next to Source code (the other row about the
@@ -492,15 +491,15 @@ class SettingsCatalogTest {
 
     @Test
     fun `search over the catalog finds every Support row`() {
-        assertThat(search("paypal")).containsExactly(SettingsItem.PAYPAL)
-        assertThat(search("upi")).contains(SettingsItem.UPI)
         assertThat(search("star github")).containsExactly(SettingsItem.STAR_ON_GITHUB)
+        // The removed payment endpoints are gone from search too.
+        assertThat(search("paypal")).isEmpty()
     }
 
     // ---- Support section (renamed from Donate) ---------------------------
 
-    private fun supportRows(paypalEnabled: Boolean = PAYPAL_DONATION_ENABLED) =
-        visibleSettingsItems(everythingOn, paypalEnabled).filter { it.section == SettingsSection.DONATE }
+    private fun supportRows() =
+        visibleSettingsItems(everythingOn).filter { it.section == SettingsSection.DONATE }
 
     @Test
     fun `the section is labelled Support, keeps the DONATE route identity, and nothing still says Donate`() {
@@ -519,46 +518,19 @@ class SettingsCatalogTest {
     }
 
     @Test
-    fun `Support shows UPI and Star on GitHub and NOT PayPal while the flag is off`() {
-        // The shipped state: the constant is off, so the default argument
-        // hides PayPal without any user-visible explanation.
-        assertThat(PAYPAL_DONATION_ENABLED).isFalse()
-        assertThat(supportRows()).containsExactly(SettingsItem.UPI, SettingsItem.STAR_ON_GITHUB).inOrder()
-        assertThat(supportRows(paypalEnabled = false)).doesNotContain(SettingsItem.PAYPAL)
-        // The section itself still has two rows, so its sub-screen is never empty.
-        assertThat(supportRows()).hasSize(2)
+    fun `Support contains only the free GitHub star after the payment endpoints were removed`() {
+        assertThat(supportRows()).containsExactly(SettingsItem.STAR_ON_GITHUB)
+        // The section still has a row, so its sub-screen is never empty.
+        assertThat(supportRows()).hasSize(1)
     }
 
     @Test
-    fun `flipping the PayPal flag back restores the row between UPI and Star on GitHub`() {
-        // Re-enabling is a one-line change of PAYPAL_DONATION_ENABLED; this
-        // pins that the disabled path has not rotted (row, string, URL intact).
-        assertThat(supportRows(paypalEnabled = true))
-            .containsExactly(SettingsItem.UPI, SettingsItem.PAYPAL, SettingsItem.STAR_ON_GITHUB)
-            .inOrder()
-        assertThat(title(SettingsItem.PAYPAL)).isEqualTo("Paypal")
-        assertThat(context.getString(R.string.url_donate_paypal)).startsWith("https://paypal.me/")
-    }
-
-    @Test
-    fun `the PayPal flag touches nothing outside the Support section`() {
-        val off = visibleSettingsItems(everythingOn, paypalEnabled = false)
-        val on = visibleSettingsItems(everythingOn, paypalEnabled = true)
-        assertThat(on - off).containsExactly(SettingsItem.PAYPAL)
-        assertThat(off.filter { it.section != SettingsSection.DONATE })
-            .isEqualTo(on.filter { it.section != SettingsSection.DONATE })
-    }
-
-    @Test
-    fun `a hidden PayPal row is also absent from search over the rendered rows`() {
-        // The screen searches the rows it renders (visibleSettingsItems), so
-        // a hidden row cannot be surfaced by typing its name either.
+    fun `the removed payment rows are absent from search over the rendered rows`() {
         val rendered = visibleSettingsItems(everythingOn)
         assertThat(filterSettingsRows(rendered, "paypal", ::title) { "" }).isEmpty()
+        assertThat(filterSettingsRows(rendered, "upi", ::title) { "" }).isEmpty()
         assertThat(filterSettingsRows(rendered, "star on github", ::title) { "" })
             .containsExactly(SettingsItem.STAR_ON_GITHUB)
-        assertThat(filterSettingsRows(visibleSettingsItems(everythingOn, paypalEnabled = true), "paypal", ::title) { "" })
-            .containsExactly(SettingsItem.PAYPAL)
     }
 
     @Test
@@ -614,22 +586,22 @@ class SettingsCatalogTest {
     }
 
     @Test
-    fun `all sections enabled and delayed sending on shows every row - bar the flagged-off PayPal`() {
-        assertThat(visibleSettingsItems(everythingOn, paypalEnabled = true)).isEqualTo(SettingsItem.entries.toList())
-        assertThat(visibleSettingsItems(everythingOn)).isEqualTo(SettingsItem.entries - SettingsItem.PAYPAL)
+    fun `all sections enabled and delayed sending on shows every row`() {
+        assertThat(visibleSettingsItems(everythingOn)).isEqualTo(SettingsItem.entries.toList())
+        assertThat(visibleSettingsItems(everythingOn)).isEqualTo(SettingsItem.entries)
     }
 
     @Test
     fun `the sending-delay row is hidden while delayed sending is off, present when on`() {
         // Meaningless while the toggle is off - same rule as a disabled
         // section's child rows. The toggle itself always stays.
-        val off = visibleSettingsItems(everythingOn.copy(delayedSendEnabled = false), paypalEnabled = true)
+        val off = visibleSettingsItems(everythingOn.copy(delayedSendEnabled = false))
         assertThat(off).doesNotContain(SettingsItem.DELAYED_SEND_DELAY)
         assertThat(off).contains(SettingsItem.DELAYED_SEND)
         // Nothing else is affected by the toggle.
         assertThat(off).isEqualTo(SettingsItem.entries - SettingsItem.DELAYED_SEND_DELAY)
 
-        val on = visibleSettingsItems(everythingOn.copy(delayedSendEnabled = true), paypalEnabled = true)
+        val on = visibleSettingsItems(everythingOn.copy(delayedSendEnabled = true))
         assertThat(on).contains(SettingsItem.DELAYED_SEND_DELAY)
         assertThat(on.indexOf(SettingsItem.DELAYED_SEND_DELAY)).isEqualTo(on.indexOf(SettingsItem.DELAYED_SEND) + 1)
     }
@@ -639,7 +611,6 @@ class SettingsCatalogTest {
         val visible =
             visibleSettingsItems(
                 everythingOn.copy(sections = EnabledSections(inbox = true, finance = false, alerts = true)),
-                paypalEnabled = true,
             )
         // Finance collapses to the one row that can bring it back - so its
         // sub-screen stays listed and reachable, showing just that toggle.
@@ -657,7 +628,6 @@ class SettingsCatalogTest {
         val onlyAlerts =
             visibleSettingsItems(
                 everythingOn.copy(sections = EnabledSections(inbox = false, finance = false, alerts = true)),
-                paypalEnabled = true,
             )
         assertThat(onlyAlerts.filter { it.section == SettingsSection.INBOX })
             .containsExactly(SettingsItem.SHOW_INBOX_TAB)

@@ -195,6 +195,30 @@ fun InboxScreen(
         }
     }
 
+    // Spam actions are reversible, so the confirmation is a plain snackbar -
+    // except the mixed-traffic case, which must say that some of the
+    // sender's messages will still come through.
+    val spamReportedMessage = stringResource(R.string.spam_reported)
+    val spamReportedMixedMessage = stringResource(R.string.spam_reported_mixed)
+    val spamClearedMessage = stringResource(R.string.spam_cleared)
+    LaunchedEffect(Unit) {
+        viewModel.spamEventFlow.collect { event ->
+            val message =
+                when (event) {
+                    is SpamUiEvent.Reported ->
+                        if (event.mixedTraffic) {
+                            String.format(spamReportedMixedMessage, event.sender)
+                        } else {
+                            spamReportedMessage
+                        }
+
+                    SpamUiEvent.Cleared -> spamClearedMessage
+                    is SpamUiEvent.Emptied -> resources.getQuantityString(R.plurals.spam_emptied, event.count, event.count)
+                }
+            snackbarHostState.showSnackbar(message = message, duration = SnackbarDuration.Short)
+        }
+    }
+
     // Losing the default-SMS role means new messages silently stop arriving.
     // Re-check on every resume so returning from the system role dialog (or
     // from another SMS app's settings) updates the banner live. Every check
@@ -257,6 +281,14 @@ fun InboxScreen(
                 .toDp()
         }
     val fabPlacement = InboxFabPlacement.placement(windowHeight)
+    // The one selected row, resolved once for the selection bar's
+    // single-thread actions (mute, report spam, block, always-sort-as).
+    val singleSelectedItem =
+        if (selection.count == 1) {
+            items.itemSnapshotList.items.firstOrNull { it.message.threadId == selection.selected.first() }
+        } else {
+            null
+        }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         snackbarHost = { SwipeDismissSnackbarHost(snackbarHostState) },
@@ -267,31 +299,29 @@ fun InboxScreen(
                     allSelectedPinned = allSelectedPinned,
                     // Single-item-only actions from the old long-press sheet
                     // live in the overflow when exactly one thread is selected.
-                    singleItem =
-                        if (selection.count == 1) {
-                            items.itemSnapshotList.items.firstOrNull {
-                                it.message.threadId == selection.selected.first()
-                            }
-                        } else {
-                            null
-                        },
+                    singleItem = singleSelectedItem,
                     onClose = viewModel::exitSelection,
                     onDelete = { confirmDelete = true },
                     onArchive = viewModel::archiveSelected,
                     onToggleRead = viewModel::toggleReadSelected,
                     onTogglePin = viewModel::togglePinSelected,
                     onSelectAll = viewModel::selectAll,
-                    singleItemMuted =
-                        selection.count == 1 &&
-                            items.itemSnapshotList.items
-                                .firstOrNull { it.message.threadId == selection.selected.first() }
-                                ?.let(state::isMuted) == true,
+                    singleItemMuted = singleSelectedItem?.let(state::isMuted) == true,
+                    singleItemSpam = singleSelectedItem?.message?.category == Category.SPAM,
                     onBlock = { sender ->
                         viewModel.block(sender)
                         viewModel.exitSelection()
                     },
                     onToggleMute = { sender ->
                         viewModel.toggleMute(sender)
+                        viewModel.exitSelection()
+                    },
+                    onReportSpam = { sender ->
+                        viewModel.reportSpam(sender)
+                        viewModel.exitSelection()
+                    },
+                    onNotSpam = { sender ->
+                        viewModel.notSpam(sender)
                         viewModel.exitSelection()
                     },
                     onAlwaysSortAs = { sender, body ->
@@ -393,7 +423,7 @@ fun InboxScreen(
             // already the moment the pills became the user's.
             if (!state.loaded) {
                 // Settings not read yet: the body stays quiet (see above).
-            } else if (emptyLoaded && state.filter == InboxFilterState()) {
+            } else if (emptyLoaded && state.filter.isUnfiltered) {
                 EmptyState(
                     icon = Icons.Outlined.Inbox,
                     title = stringResource(R.string.inbox_empty_title),
@@ -444,6 +474,18 @@ fun InboxScreen(
                                     item(key = "contacts_permission") {
                                         ContactsPermissionBanner(
                                             onGrant = { contactsPermission.launchPermissionRequest() },
+                                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                        )
+                                    }
+                                }
+                            }
+
+                            InboxBannerSlot.SPAM -> {
+                                if (state.filter.category == Category.SPAM && state.spamCount > 0) {
+                                    item(key = "spam_banner") {
+                                        SpamFolderBanner(
+                                            count = state.spamCount,
+                                            onEmptySpam = viewModel::emptySpam,
                                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                                         )
                                     }
@@ -580,6 +622,8 @@ private fun InboxSelectionBar(
     singleItem: InboxItem?,
     /** Whether [singleItem]'s sender is muted - flips the Mute entry to Unmute. */
     singleItemMuted: Boolean,
+    /** Whether [singleItem]'s thread is already filed as Spam - flips Report to "Not spam". */
+    singleItemSpam: Boolean,
     onClose: () -> Unit,
     onDelete: () -> Unit,
     onArchive: () -> Unit,
@@ -588,6 +632,8 @@ private fun InboxSelectionBar(
     onSelectAll: () -> Unit,
     onBlock: (sender: String) -> Unit,
     onToggleMute: (sender: String) -> Unit,
+    onReportSpam: (sender: String) -> Unit,
+    onNotSpam: (sender: String) -> Unit,
     onAlwaysSortAs: (sender: String, body: String) -> Unit,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
@@ -639,6 +685,7 @@ private fun InboxSelectionBar(
                         allSelectedPinned = allSelectedPinned,
                         singleThread = singleItem != null,
                         singleThreadMuted = singleItemMuted,
+                        singleThreadSpam = singleItemSpam,
                     )
                 overflow.forEach { action ->
                     when (action) {
@@ -689,6 +736,28 @@ private fun InboxSelectionBar(
                                 onClick = {
                                     menuOpen = false
                                     singleItem?.let { onToggleMute(it.message.sender) }
+                                },
+                            )
+                        }
+
+                        SelectionAction.REPORT_SPAM -> {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_report_spam)) },
+                                leadingIcon = { Icon(Icons.Outlined.Info, contentDescription = null) },
+                                onClick = {
+                                    menuOpen = false
+                                    singleItem?.let { onReportSpam(it.message.sender) }
+                                },
+                            )
+                        }
+
+                        SelectionAction.NOT_SPAM -> {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_not_spam)) },
+                                leadingIcon = { Icon(Icons.Outlined.Inbox, contentDescription = null) },
+                                onClick = {
+                                    menuOpen = false
+                                    singleItem?.let { onNotSpam(it.message.sender) }
                                 },
                             )
                         }

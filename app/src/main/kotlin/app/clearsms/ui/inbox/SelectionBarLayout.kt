@@ -10,6 +10,13 @@ enum class SelectionAction {
     SELECT_ALL,
 
     /**
+     * File the selected thread's sender as spam (a reversible user rule),
+     * or remove that filing. Both act on ONE sender, like MUTE/BLOCK.
+     */
+    REPORT_SPAM,
+    NOT_SPAM,
+
+    /**
      * Mute / unmute notifications for the one selected sender - a single
      * toggle whose entry reflects the current state (like PIN / UNPIN).
      * Messages keep arriving; only notifications stop
@@ -73,12 +80,16 @@ object SelectionBarLayout {
         allSelectedPinned: Boolean,
         singleThread: Boolean,
         singleThreadMuted: Boolean = false,
+        singleThreadSpam: Boolean = false,
     ): List<SelectionAction> =
         buildList {
             add(pinAction(allSelectedPinned))
             add(SelectionAction.SELECT_ALL)
             if (singleThread) {
                 add(muteAction(singleThreadMuted))
+                // Report/Block read as an escalation: the reversible filing
+                // first, the destructive block second.
+                add(if (singleThreadSpam) SelectionAction.NOT_SPAM else SelectionAction.REPORT_SPAM)
                 add(SelectionAction.BLOCK)
                 add(SelectionAction.ALWAYS_SORT_AS)
             }

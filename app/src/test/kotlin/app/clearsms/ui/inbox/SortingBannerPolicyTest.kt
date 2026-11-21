@@ -83,6 +83,7 @@ class SortingBannerPolicyTest {
                 InboxBannerSlot.OTP,
                 InboxBannerSlot.DEFAULT_SMS,
                 InboxBannerSlot.CONTACTS_PERMISSION,
+                InboxBannerSlot.SPAM,
                 InboxBannerSlot.SORTING,
             ).inOrder()
     }

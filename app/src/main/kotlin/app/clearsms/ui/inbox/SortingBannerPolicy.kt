@@ -45,5 +45,6 @@ enum class InboxBannerSlot {
     OTP,
     DEFAULT_SMS,
     CONTACTS_PERMISSION,
+    SPAM,
     SORTING,
 }

@@ -77,6 +77,7 @@ class RecategorizeWorkerTest {
             override fun observeInbox(
                 category: Category?,
                 unreadOnly: Boolean,
+                excludeSpam: Boolean,
             ): Flow<List<MessageEntity>> = emptyFlow()
 
             override fun observeThread(threadId: Long): Flow<List<MessageEntity>> = emptyFlow()
@@ -85,6 +86,7 @@ class RecategorizeWorkerTest {
                 category: Category?,
                 unreadOnly: Boolean,
                 sortOrder: MessageSortOrder,
+                excludeSpam: Boolean,
             ): PagingSource<Int, InboxThreadRow> = throw UnsupportedOperationException()
 
             override suspend fun draftFor(threadId: Long): String? = null
@@ -111,6 +113,7 @@ class RecategorizeWorkerTest {
             override suspend fun inboxThreadIds(
                 category: Category?,
                 unreadOnly: Boolean,
+                excludeSpam: Boolean,
             ): List<Long> = emptyList()
 
             override suspend fun messageIdsInThread(threadId: Long): List<Long> = emptyList()
@@ -118,6 +121,12 @@ class RecategorizeWorkerTest {
             override suspend fun countOtpOlderThan(cutoffMs: Long): Int = 0
 
             override suspend fun deleteOtpOlderThan(cutoffMs: Long): Int = 0
+
+        override suspend fun spamMessageIds(): List<Long> = emptyList()
+
+        override suspend fun emptySpam(): Int = 0
+
+        override fun observeCategoryCount(category: Category): Flow<Int> = emptyFlow()
 
             override suspend fun positionInThread(
                 threadId: Long,

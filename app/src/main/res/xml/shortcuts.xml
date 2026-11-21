@@ -39,7 +39,7 @@
         <intent
             android:action="android.intent.action.SENDTO"
             android:data="smsto:"
-            android:targetPackage="app.clearsms"
+            android:targetPackage="app.sift.sms"
             android:targetClass="app.clearsms.MainActivity" />
     </shortcut>
     <share-target android:targetClass="app.clearsms.MainActivity">

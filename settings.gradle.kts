@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ClearSMS"
+rootProject.name = "Sift"
 include(":app")

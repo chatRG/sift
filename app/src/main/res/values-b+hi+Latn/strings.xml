@@ -218,7 +218,7 @@
     <string name="rules_import">Rules import karein</string>
     <string name="rules_export">Rules export karein</string>
     <string name="rules_share">Developer ke saath rules share karein</string>
-    <string name="rules_share_subject">Clear SMS rules contribution</string>
+    <string name="rules_share_subject">Sift rules contribution</string>
     <string name="rules_import_success">Rules import ho gaye</string>
     <string name="rules_import_failed">Yeh file valid rules document nahi hai</string>
     <string name="rule_wizard_title">Rule banayein</string>
@@ -235,14 +235,14 @@
     <string name="rule_wizard_test_match">Match hua → %1$s %2$s</string>
     <string name="rule_wizard_test_no_match">Koi match nahi</string>
     <string name="rule_wizard_test_invalid">Invalid pattern: %1$s</string>
-    <string name="onboarding_welcome_title">Clear SMS me aapka swagat hai</string>
+    <string name="onboarding_welcome_title">Sift me aapka swagat hai</string>
     <string name="onboarding_welcome_body">Aapka inbox, organized. Messages categorize hote hain, transactions track hote hain aur OTP saamne aate hain - sab kuch sirf is device par. Koi server nahi, koi ads nahi, koi tracking nahi.</string>
     <string name="onboarding_get_started">Shuru karein</string>
     <string name="onboarding_permissions_title">Permissions</string>
-    <string name="onboarding_permissions_body">Aapke messages organize karne ke liye Clear SMS ko SMS access chahiye, aur jaane-pehchaane logon ko recognize karne ke liye contacts access. Kuch bhi aapke phone se bahar nahi jaata.</string>
+    <string name="onboarding_permissions_body">Aapke messages organize karne ke liye Sift ko SMS access chahiye, aur jaane-pehchaane logon ko recognize karne ke liye contacts access. Kuch bhi aapke phone se bahar nahi jaata.</string>
     <string name="onboarding_grant_permissions">Permissions dein</string>
-    <string name="onboarding_default_sms_title">Clear SMS ko apna SMS app banayein</string>
-    <string name="onboarding_default_sms_body">Messages receive aur send karne ke liye Clear SMS aapka default SMS app hona chahiye. Aap kabhi bhi wapas switch kar sakte hain.</string>
+    <string name="onboarding_default_sms_title">Sift ko apna SMS app banayein</string>
+    <string name="onboarding_default_sms_body">Messages receive aur send karne ke liye Sift aapka default SMS app hona chahiye. Aap kabhi bhi wapas switch kar sakte hain.</string>
     <string name="onboarding_set_default">Default set karein</string>
     <string name="onboarding_sync_title">Aapka inbox organize ho raha hai</string>
     <string name="onboarding_sync_body">Aapke existing messages import aur categorize ho rahe hain. Yeh background me chalta rahega.</string>
@@ -409,7 +409,7 @@
     <string name="settings_transaction_notifications">Transaction notifications</string>
     <string name="settings_transaction_notifications_summary">Raw message ke bajaye parsed amount dikhayein</string>
     <string name="settings_system_notifications">Notifications customise karein</string>
-    <string name="settings_system_notifications_summary">Clear SMS ke liye Android ki settings kholta hai - har category ka sound, vibration aur importance wahan hai</string>
+    <string name="settings_system_notifications_summary">Sift ke liye Android ki settings kholta hai - har category ka sound, vibration aur importance wahan hai</string>
     <string name="settings_system_notifications_no_handler">Is device par notification settings ki koi screen nahi hai</string>
     <string name="settings_swipe_right">Right swipe action</string>
     <string name="settings_swipe_left">Left swipe action</string>
@@ -492,10 +492,6 @@
     <string name="settings_source_code">Source code</string>
     <string name="settings_source_code_summary">Project GitHub par dekhein</string>
     <string name="settings_section_support">Support</string>
-    <string name="settings_donate_paypal">Paypal</string>
-    <string name="settings_donate_paypal_summary">Agar app aapke kaam aata hai, to aap PayPal se support kar sakte hain</string>
-    <string name="settings_donate_upi">UPI</string>
-    <string name="settings_donate_upi_summary">UPI payment se app development ko support karein</string>
     <string name="settings_star_on_github">GitHub par star karein</string>
     <string name="settings_star_on_github_summary">Free hai aur ek second lagta hai - stars se doosre log app dhundh paate hain</string>
     <string name="settings_link_no_handler">Yeh link kholne ke liye koi app nahi mila</string>
@@ -531,7 +527,7 @@
     <string name="settings_search_close">Search close karein</string>
     <string name="settings_search_empty">\u201C%1$s\u201D se koi setting match nahi hui</string>
     <string name="privacy_ondevice_title">Sab processing aapke device par hi hoti hai</string>
-    <string name="privacy_ondevice_body">Categorization, OTP extraction aur transaction parsing poori tarah isi phone par chalti hai. Clear SMS ke koi server nahi hain aur yeh chalte waqt koi network call nahi karta. Aapke message kabhi upload, share ya kahin aur analyze nahi kiye jaate.</string>
+    <string name="privacy_ondevice_body">Categorization, OTP extraction aur transaction parsing poori tarah isi phone par chalti hai. Sift ke koi server nahi hain aur yeh chalte waqt koi network call nahi karta. Aapke message kabhi upload, share ya kahin aur analyze nahi kiye jaate.</string>
     <string name="privacy_no_network_title">Na analytics, na tracking, na ads</string>
     <string name="privacy_no_network_body">App me koi analytics SDK, data bhejne wala crash reporter, advertising framework ya proprietary service nahi hai.</string>
     <string name="privacy_backups_title">Backup aapke hain</string>
@@ -644,7 +640,7 @@
         <item quantity="one">%1$s, %2$d reminder</item>
         <item quantity="other">%1$s, %2$d reminders</item>
     </plurals>
-    <string name="inbox_default_sms_banner">Clear SMS aapka default SMS app nahi hai - naye message yahan nahi aayenge</string>
+    <string name="inbox_default_sms_banner">Sift aapka default SMS app nahi hai - naye message yahan nahi aayenge</string>
     <string name="inbox_default_sms_dismiss">Hatayein</string>
     <string name="rule_wizard_title_edit">Rule edit karein</string>
     <string name="rule_detail_id">Rule ID</string>
@@ -677,7 +673,7 @@
     <string name="bin_delete_forever">Hamesha ke liye delete karein</string>
     <string name="bin_empty_bin">Bin khali karein</string>
     <string name="bin_restored">Message restore ho gaya</string>
-    <string name="bin_restored_app_only">Sirf Clear SMS me restore hua - system SMS store me wapas nahi likha ja saka</string>
+    <string name="bin_restored_app_only">Sirf Sift me restore hua - system SMS store me wapas nahi likha ja saka</string>
     <string name="bin_delete_forever_title">Hamesha ke liye delete karein?</string>
     <string name="bin_delete_forever_message">Yeh message permanently hat jaayega. Yeh undo nahi ho sakta.</string>
     <string name="bin_empty_confirm_title">Recycle bin khali karein?</string>

@@ -66,7 +66,7 @@
     <string name="compose_attachment_size">%1$s von %2$s</string>
     <string name="compose_attachment_schedule_sms_only">Planen geht nur für SMS - entfernen Sie die Anhänge, um zu planen</string>
     <string name="compose_camera_missing">Keine Kamera-App verfügbar</string>
-    <string name="share_only_images">Nur Bilder können an Clear SMS geteilt werden</string>
+    <string name="share_only_images">Nur Bilder können an Sift geteilt werden</string>
     <string name="conversation_mms_failed_dialog_title">Download fehlgeschlagen</string>
     <string name="conversation_mms_failed_dialog_message">Diese MMS konnte nicht heruntergeladen werden. Versuchen Sie den Download erneut oder löschen Sie die Nachricht.</string>
     <string name="bill_due_title">Rechnung morgen fällig</string>
@@ -79,12 +79,12 @@
         <item quantity="one">%d neue Nachricht</item>
         <item quantity="other">%d neue Nachrichten</item>
     </plurals>
-    <string name="catch_up_summary_text">Empfangen, während Clear SMS aufgeholt hat</string>
+    <string name="catch_up_summary_text">Empfangen, während Sift aufgeholt hat</string>
     <string name="resort_title">Posteingang wird sortiert</string>
     <string name="inbox_sorting_banner">Ihre Nachrichten werden nach dem Update neu sortiert…</string>
     <string name="shortcut_compose_short">Neue Nachricht</string>
     <string name="shortcut_compose_long">Neue Nachricht schreiben</string>
-    <string name="shortcut_compose_disabled">Clear SMS ist nicht verfügbar</string>
-    <string name="shortcut_disabled_unavailable">Diese Unterhaltung ist in Clear SMS nicht mehr verfügbar</string>
-    <string name="shortcut_disabled_setting_off">Verknüpfungen für Unterhaltungen sind in den Einstellungen von Clear SMS ausgeschaltet</string>
+    <string name="shortcut_compose_disabled">Sift ist nicht verfügbar</string>
+    <string name="shortcut_disabled_unavailable">Diese Unterhaltung ist in Sift nicht mehr verfügbar</string>
+    <string name="shortcut_disabled_setting_off">Verknüpfungen für Unterhaltungen sind in den Einstellungen von Sift ausgeschaltet</string>
 </resources>

@@ -1826,16 +1826,6 @@ private fun settingsRowEntries(
                     row(section, title, stringResource(R.string.settings_share_logs_summary), onShareLogs)
                 }
 
-                SettingsItem.UPI -> {
-                    val url = stringResource(R.string.url_donate_upi)
-                    row(section, title, stringResource(R.string.settings_donate_upi_summary)) { onOpenLink(url) }
-                }
-
-                SettingsItem.PAYPAL -> {
-                    val url = stringResource(R.string.url_donate_paypal)
-                    row(section, title, stringResource(R.string.settings_donate_paypal_summary)) { onOpenLink(url) }
-                }
-
                 SettingsItem.STAR_ON_GITHUB -> {
                     // Deliberately the SAME resource as About's Source code
                     // row: one URL, so the two can never drift apart.

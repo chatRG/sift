@@ -16,6 +16,7 @@ import app.clearsms.data.prefs.SettingsRepository
 import app.clearsms.data.repository.MessageRepository
 import app.clearsms.data.repository.SenderBlocker
 import app.clearsms.data.repository.SenderMuter
+import app.clearsms.data.repository.SpamReporting
 import app.clearsms.data.repository.UndoManager
 import app.clearsms.di.IoDispatcher
 import app.clearsms.domain.categorizer.SenderIdLookup
@@ -77,9 +78,23 @@ import javax.inject.Inject
 data class InboxFilterState(
     val pill: InboxPill? = null,
     val unreadOnly: Boolean = false,
+    /**
+     * Drop plain Spam from the unfiltered (All) view. Derived, never
+     * user-set: true whenever the Spam pill is visible, so hiding the pill
+     * makes spam reachable again. SCAM-flagged rows stay visible regardless -
+     * the warning is the point.
+     */
+    val excludeSpam: Boolean = false,
 ) {
     /** The category the query filters on; null for All. */
     val category: Category? get() = pill?.category
+
+    /**
+     * Whether this is the plain, unfiltered inbox (no pill, Unread off) -
+     * the state that shows the welcome empty state. Compares INTENT, not
+     * every field: [excludeSpam] is derived and differs on the default view.
+     */
+    val isUnfiltered: Boolean get() = pill == null && !unreadOnly
 
     /** Selects [value], or clears the pill when it is already selected. */
     fun selectPill(value: InboxPill): InboxFilterState = copy(pill = if (pill == value) null else value)
@@ -103,6 +118,7 @@ data class InboxFilterState(
         copy(
             pill = activePill(pill, visible, fallback = null),
             unreadOnly = unreadOnly && unreadControl,
+            excludeSpam = InboxPill.SPAM in visible,
         )
 
     /**
@@ -157,6 +173,8 @@ data class LatestOtp(
 data class InboxUiState(
     val filter: InboxFilterState = InboxFilterState(),
     val unreadCounts: Map<Category, Int> = emptyMap(),
+    /** Live Spam message count, for the Spam folder banner. */
+    val spamCount: Int = 0,
     /** Pill order, hidden set and labels the user configured in Settings. */
     val pills: InboxPillConfig = InboxPillConfig(),
     /** Whether the "Unread" switch above the pills is rendered at all. */
@@ -203,6 +221,18 @@ data class MuteUiEvent(
     val muted: Boolean,
 )
 
+/** One-shot outcomes of the spam actions. */
+sealed interface SpamUiEvent {
+    /** [sender] was filed as spam; [mixedTraffic] drives the honest copy. */
+    data class Reported(val sender: String, val mixedTraffic: Boolean) : SpamUiEvent
+
+    /** The sender was removed from Spam. */
+    data object Cleared : SpamUiEvent
+
+    /** [count] Spam messages were deleted permanently. */
+    data class Emptied(val count: Int) : SpamUiEvent
+}
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class InboxViewModel
@@ -213,6 +243,7 @@ class InboxViewModel
         private val undoManager: UndoManager,
         private val senderBlocker: SenderBlocker,
         private val senderMuter: SenderMuter,
+        private val spamReporter: SpamReporting,
         private val senderIdLookup: SenderIdLookup,
         private val contactsSource: ContactsSource,
         private val settings: SettingsRepository,
@@ -245,6 +276,10 @@ class InboxViewModel
         /** One-shot mute/unmute confirmations (the change must be visible, not just silent). */
         private val muteEvents = Channel<MuteUiEvent>(Channel.BUFFERED)
         val muteEventFlow: Flow<MuteUiEvent> = muteEvents.receiveAsFlow()
+
+        /** One-shot spam action confirmations. */
+        private val spamEvents = Channel<SpamUiEvent>(Channel.BUFFERED)
+        val spamEventFlow: Flow<SpamUiEvent> = spamEvents.receiveAsFlow()
 
         /**
          * The PagingSource the running pager is currently loading from, so a
@@ -359,7 +394,7 @@ class InboxViewModel
                             ),
                         pagingSourceFactory = {
                             messageRepository
-                                .pagedInbox(key.category, key.unreadOnly, key.sortOrder)
+                                .pagedInbox(key.category, key.unreadOnly, key.sortOrder, key.excludeSpam)
                                 .also { activePagingSource = it }
                         },
                     ).flow
@@ -406,6 +441,7 @@ class InboxViewModel
             val showUnreadToggle: Boolean = true,
             val mutedSenders: Set<String> = emptySet(),
             val recycleBinEnabled: Boolean = true,
+            val spamCount: Int = 0,
         )
 
         private val chrome =
@@ -420,6 +456,9 @@ class InboxViewModel
                 .combine(settings.inboxUnreadToggle) { chrome, shown -> chrome.copy(showUnreadToggle = shown) }
                 .combine(settings.mutedSenders) { chrome, muted -> chrome.copy(mutedSenders = muted) }
                 .combine(settings.recycleBinEnabled) { chrome, bin -> chrome.copy(recycleBinEnabled = bin) }
+                .combine(messageRepository.observeCategoryCount(Category.SPAM)) { chrome, spam ->
+                    chrome.copy(spamCount = spam)
+                }
 
         val uiState: StateFlow<InboxUiState> =
             combine(
@@ -432,6 +471,7 @@ class InboxViewModel
                 InboxUiState(
                     filter = currentFilter,
                     unreadCounts = counts.associate { it.category to it.count },
+                    spamCount = chromeState.spamCount,
                     totalUnread = counts.sumOf { it.count },
                     latestOtp = otp,
                     richAvatars = chromeState.richAvatars,
@@ -514,7 +554,7 @@ class InboxViewModel
         /**
          * Blocks [sender] through the SAME path Settings uses
          * ([SenderBlocker]): the sender lands in the Settings block-list
-         * dialog (where unblocking lives), its existing conversation moves
+         * dialog (where unblocking lives), its existing conversations move
          * to the recycle bin, and future messages arrive born-deleted and
          * silent. No confirm step - delete, the closest destructive
          * neighbor, has none either - and no undo snackbar (see
@@ -536,6 +576,36 @@ class InboxViewModel
         fun toggleMute(sender: String) {
             viewModelScope.launch(ioDispatcher) {
                 senderMuter.toggle(sender)?.let { muteEvents.send(MuteUiEvent(muted = it)) }
+            }
+        }
+
+        /**
+         * Files [sender] as spam through [SpamReporter]: an ordinary
+         * sender-scoped rule that re-sorts the sender's existing messages
+         * under the Spam pill. Nothing is deleted - the messages stay
+         * reviewable and "Not spam" reverses the decision.
+         */
+        fun reportSpam(sender: String) {
+            viewModelScope.launch(ioDispatcher) {
+                spamReporter.report(sender)?.let { report ->
+                    spamEvents.send(SpamUiEvent.Reported(sender = report.senderCore, mixedTraffic = report.mixedTraffic))
+                }
+            }
+        }
+
+        /** Reverses [reportSpam] (or a heuristic filing) and re-sorts the sender. */
+        fun notSpam(sender: String) {
+            viewModelScope.launch(ioDispatcher) {
+                spamReporter.notSpam(sender)
+                spamEvents.send(SpamUiEvent.Cleared)
+            }
+        }
+
+        /** Permanently deletes every live Spam message (confirmed by the banner). */
+        fun emptySpam() {
+            viewModelScope.launch(ioDispatcher) {
+                val deleted = messageRepository.emptySpam()
+                if (deleted > 0) spamEvents.send(SpamUiEvent.Emptied(deleted))
             }
         }
 
@@ -571,7 +641,7 @@ class InboxViewModel
         fun selectAll() {
             viewModelScope.launch(ioDispatcher) {
                 val current = effectiveFilter.first()
-                val ids = messageRepository.inboxThreadIds(current.category, current.unreadOnly)
+                val ids = messageRepository.inboxThreadIds(current.category, current.unreadOnly, current.excludeSpam)
                 selectionState.update { it.withAll(ids) }
             }
         }

@@ -4,6 +4,7 @@ import app.clearsms.data.db.RuleEntity
 import app.clearsms.data.repository.RuleRepository
 import app.clearsms.data.rules.RuleDefinition
 import app.clearsms.data.rules.RuleSources
+import app.clearsms.data.rules.toDefinition
 import app.clearsms.data.rules.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,11 @@ class FakeRuleRepository(
     override suspend fun deleteRule(id: String) {
         rules.value = rules.value.filterNot { it.id == id }
     }
+
+    override suspend fun userRuleDefinitions(): List<RuleDefinition> =
+        rules.value
+            .filter { it.source == RuleSources.USER }
+            .mapNotNull { it.toDefinition(json) }
 
     override suspend fun restoreParkedRule(
         definition: RuleDefinition,

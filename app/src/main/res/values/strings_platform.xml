@@ -79,7 +79,7 @@
     <string name="compose_attachment_size">%1$s of %2$s</string>
     <string name="compose_attachment_schedule_sms_only">Scheduling is SMS-only - remove attachments to schedule</string>
     <string name="compose_camera_missing">No camera app available</string>
-    <string name="share_only_images">Only images can be shared into Clear SMS</string>
+    <string name="share_only_images">Only images can be shared into Sift</string>
     <string name="conversation_mms_failed_dialog_title">Download failed</string>
     <string name="conversation_mms_failed_dialog_message">This multimedia message could not be downloaded. Retry the download or delete the message.</string>
 
@@ -97,7 +97,7 @@
         <item quantity="one">%d new message</item>
         <item quantity="other">%d new messages</item>
     </plurals>
-    <string name="catch_up_summary_text">Received while Clear SMS was catching up</string>
+    <string name="catch_up_summary_text">Received while Sift was catching up</string>
 
     <!-- Manual re-sort -->
     <string name="resort_title">Sorting your inbox</string>
@@ -106,11 +106,11 @@
     <!-- Launcher shortcuts (long-press the app icon, issue #81) -->
     <string name="shortcut_compose_short">New message</string>
     <string name="shortcut_compose_long">Write a new message</string>
-    <string name="shortcut_compose_disabled">Clear SMS is not available</string>
+    <string name="shortcut_compose_disabled">Sift is not available</string>
     <!-- Shown by the launcher when a conversation shortcut the user pinned to the
          home screen was disabled because its thread was blocked, binned, muted or
          sorted as spam. -->
-    <string name="shortcut_disabled_unavailable">This conversation is no longer available in Clear SMS</string>
+    <string name="shortcut_disabled_unavailable">This conversation is no longer available in Sift</string>
     <!-- Shown when the user turned conversation shortcuts off in Settings. -->
-    <string name="shortcut_disabled_setting_off">Conversation shortcuts are turned off in Clear SMS settings</string>
+    <string name="shortcut_disabled_setting_off">Conversation shortcuts are turned off in Sift settings</string>
 </resources>

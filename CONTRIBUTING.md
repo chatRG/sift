@@ -1,4 +1,4 @@
-# Contributing to Clear SMS
+# Contributing to Sift
 
 Thanks for helping make SMS organization better for everyone! The most valuable
 contribution is a **categorization rule**: a small JSON document that teaches the app

@@ -90,7 +90,8 @@ fun LicensesScreen(onBack: () -> Unit) {
         onBack = onBack,
         paragraphs =
             listOf(
-                "Clear SMS" to stringResource(R.string.licenses_app),
+                "Sift" to stringResource(R.string.licenses_app),
+                "Clear SMS (upstream)" to "Apache License 2.0, Copyright 2026 Prakash",
                 "AndroidX / Jetpack Compose" to stringResource(R.string.licenses_apache2),
                 "Kotlin & kotlinx libraries" to stringResource(R.string.licenses_apache2),
                 "Material Components for Android" to stringResource(R.string.licenses_apache2),

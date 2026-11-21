@@ -209,12 +209,6 @@ enum class SettingsItem(
     BACKUP_LOCATION(SettingsSection.BACKUP, R.string.settings_backup_location),
     MANAGE_RULES(SettingsSection.RULES, R.string.settings_manage_rules),
     SIGNATURE(SettingsSection.SIGNATURE, R.string.settings_signature),
-    UPI(SettingsSection.DONATE, R.string.settings_donate_upi),
-
-    // Rendered only while PAYPAL_DONATION_ENABLED is true (see
-    // visibleSettingsItems); the row, its strings and its URL stay so that
-    // bringing it back is a one-line flip.
-    PAYPAL(SettingsSection.DONATE, R.string.settings_donate_paypal),
 
     // The no-cost way to help: opens the repository (the same URL as About's
     // Source code row) so the user can star it.
@@ -254,14 +248,6 @@ data class SettingsVisibility(
 )
 
 /**
- * Whether the PayPal row of the Support section is offered. Temporarily
- * OFF: flip this one constant to `true` to bring the row back - nothing
- * else (row, strings, URL, tests) was removed. No reason is shown to users
- * by design; the row simply does not appear while this is false.
- */
-internal const val PAYPAL_DONATION_ENABLED = false
-
-/**
  * The rows the settings screens render given the current toggles.
  *
  * A disabled Inbox/Finance/Alerts section keeps ONLY its "Show … tab"
@@ -272,20 +258,16 @@ internal const val PAYPAL_DONATION_ENABLED = false
  * would strand a user who disabled the section from inside it.
  *
  * "Sending delay" is meaningless while "Delay before sending" is off, so it
- * is hidden the same way. The PayPal row follows [paypalEnabled]
- * (production passes [PAYPAL_DONATION_ENABLED]; tests pass both values so
- * neither path can rot). Every other row is untouched.
+ * is hidden the same way. Every other row is untouched.
  */
 fun visibleSettingsItems(
     visibility: SettingsVisibility,
-    paypalEnabled: Boolean = PAYPAL_DONATION_ENABLED,
 ): List<SettingsItem> =
     SettingsItem.entries.filter { item ->
         when (item.section) {
             SettingsSection.INBOX -> visibility.sections.inbox || item == SettingsItem.SHOW_INBOX_TAB
             SettingsSection.FINANCE -> visibility.sections.finance || item == SettingsItem.SHOW_FINANCE_TAB
             SettingsSection.ALERTS -> visibility.sections.alerts || item == SettingsItem.SHOW_ALERTS_TAB
-            SettingsSection.DONATE -> item != SettingsItem.PAYPAL || paypalEnabled
             else -> item != SettingsItem.DELAYED_SEND_DELAY || visibility.delayedSendEnabled
         }
     }

@@ -212,7 +212,7 @@
     <string name="rules_import">Импортировать правила</string>
     <string name="rules_export">Экспортировать правила</string>
     <string name="rules_share">Поделиться правилами с разработчиком</string>
-    <string name="rules_share_subject">Правила для Clear SMS</string>
+    <string name="rules_share_subject">Правила для Sift</string>
     <string name="rules_import_success">Правила импортированы</string>
     <string name="rules_import_failed">Этот файл не является корректным файлом правил</string>
     <string name="rule_wizard_title">Создать правило</string>
@@ -229,14 +229,14 @@
     <string name="rule_wizard_test_match">Совпадает → %1$s %2$s</string>
     <string name="rule_wizard_test_no_match">Нет совпадения</string>
     <string name="rule_wizard_test_invalid">Неверный шаблон: %1$s</string>
-    <string name="onboarding_welcome_title">Добро пожаловать в Clear SMS</string>
+    <string name="onboarding_welcome_title">Добро пожаловать в Sift</string>
     <string name="onboarding_welcome_body">Ваши входящие в порядке. Сообщения распределяются по категориям, транзакции отслеживаются, OTP выводятся на видное место - всё только на этом устройстве. Без серверов, рекламы и слежки.</string>
     <string name="onboarding_get_started">Начать</string>
     <string name="onboarding_permissions_title">Разрешения</string>
-    <string name="onboarding_permissions_body">Clear SMS нужен доступ к SMS, чтобы упорядочить сообщения, и доступ к контактам, чтобы узнавать знакомых вам людей. Ничто никогда не покидает ваш телефон.</string>
+    <string name="onboarding_permissions_body">Sift нужен доступ к SMS, чтобы упорядочить сообщения, и доступ к контактам, чтобы узнавать знакомых вам людей. Ничто никогда не покидает ваш телефон.</string>
     <string name="onboarding_grant_permissions">Дать разрешения</string>
-    <string name="onboarding_default_sms_title">Сделать Clear SMS вашим SMS-приложением</string>
-    <string name="onboarding_default_sms_body">Чтобы получать и отправлять сообщения, Clear SMS должно быть SMS-приложением по умолчанию. Вы можете вернуться к умолчаниям в любой момент.</string>
+    <string name="onboarding_default_sms_title">Сделать Sift вашим SMS-приложением</string>
+    <string name="onboarding_default_sms_body">Чтобы получать и отправлять сообщения, Sift должно быть SMS-приложением по умолчанию. Вы можете вернуться к умолчаниям в любой момент.</string>
     <string name="onboarding_set_default">Назначить по умолчанию</string>
     <string name="onboarding_sync_title">Упорядочиваем входящие</string>
     <string name="onboarding_sync_body">Импортируем и сортируем ваши сообщения. Это продолжится в фоне.</string>
@@ -405,7 +405,7 @@
     <string name="settings_transaction_notifications">Уведомления о транзакциях</string>
     <string name="settings_transaction_notifications_summary">Показывать разобранную сумму вместо исходного сообщения</string>
     <string name="settings_system_notifications">Настроить уведомления</string>
-    <string name="settings_system_notifications_summary">Открывает настройки Android для Clear SMS - звук, вибрация и важность каждой категории задаются там</string>
+    <string name="settings_system_notifications_summary">Открывает настройки Android для Sift - звук, вибрация и важность каждой категории задаются там</string>
     <string name="settings_system_notifications_no_handler">На этом устройстве нет экрана настроек уведомлений</string>
     <string name="settings_swipe_right">Действие при свайпе вправо</string>
     <string name="settings_swipe_left">Действие при свайпе влево</string>
@@ -490,10 +490,6 @@
     <string name="settings_source_code">Исходный код</string>
     <string name="settings_source_code_summary">Открыть проект на GitHub</string>
     <string name="settings_section_support">Поддержать</string>
-    <string name="settings_donate_paypal">Paypal</string>
-    <string name="settings_donate_paypal_summary">Если приложение вам полезно, вы можете поддержать его через PayPal</string>
-    <string name="settings_donate_upi">UPI</string>
-    <string name="settings_donate_upi_summary">Поддержать разработку приложения платежом через UPI</string>
     <string name="settings_star_on_github">Звезда на GitHub</string>
     <string name="settings_star_on_github_summary">Бесплатно и занимает секунду - звёзды помогают другим найти приложение</string>
     <string name="settings_link_no_handler">Нет приложения, чтобы открыть эту ссылку</string>
@@ -529,7 +525,7 @@
     <string name="settings_search_close">Закрыть поиск</string>
     <string name="settings_search_empty">Нет настроек по запросу \u201C%1$s\u201D</string>
     <string name="privacy_ondevice_title">Вся обработка происходит на вашем устройстве</string>
-    <string name="privacy_ondevice_body">Категоризация, извлечение OTP и разбор транзакций выполняются целиком на этом телефоне. У Clear SMS нет серверов, и во время работы приложение не выполняет сетевых запросов. Ваши сообщения никогда не загружаются, не передаются и не анализируются где-либо ещё.</string>
+    <string name="privacy_ondevice_body">Категоризация, извлечение OTP и разбор транзакций выполняются целиком на этом телефоне. У Sift нет серверов, и во время работы приложение не выполняет сетевых запросов. Ваши сообщения никогда не загружаются, не передаются и не анализируются где-либо ещё.</string>
     <string name="privacy_no_network_title">Без аналитики, слежения и рекламы</string>
     <string name="privacy_no_network_body">В приложении нет ни SDK аналитики, ни систем отчётов о сбоях, передающих данные, ни рекламных фреймворков, ни проприетарных сервисов.</string>
     <string name="privacy_backups_title">Резервные копии принадлежат вам</string>
@@ -644,7 +640,7 @@
         <item quantity="many">%1$s, %2$d напоминаний</item>
         <item quantity="other">%1$s, %2$d напоминания</item>
     </plurals>
-    <string name="inbox_default_sms_banner">Clear SMS не является SMS-приложением по умолчанию - новые сообщения сюда не придут</string>
+    <string name="inbox_default_sms_banner">Sift не является SMS-приложением по умолчанию - новые сообщения сюда не придут</string>
     <string name="inbox_default_sms_dismiss">Закрыть</string>
     <string name="rule_wizard_title_edit">Изменить правило</string>
     <string name="rule_detail_id">ID правила</string>
@@ -681,7 +677,7 @@
     <string name="bin_delete_forever">Удалить навсегда</string>
     <string name="bin_empty_bin">Очистить корзину</string>
     <string name="bin_restored">Сообщение восстановлено</string>
-    <string name="bin_restored_app_only">Восстановлено только в Clear SMS - не удалось записать его обратно в системное хранилище SMS</string>
+    <string name="bin_restored_app_only">Восстановлено только в Sift - не удалось записать его обратно в системное хранилище SMS</string>
     <string name="bin_delete_forever_title">Удалить навсегда?</string>
     <string name="bin_delete_forever_message">Это сообщение будет удалено без возможности восстановления. Это действие нельзя отменить.</string>
     <string name="bin_empty_confirm_title">Очистить корзину?</string>

@@ -35,6 +35,7 @@ interface MessageDao {
         ${LatestPerThreadSql.JOIN_BY_RECEIVED}
         WHERE m.isArchived = 0
           AND (:category IS NULL OR m.category = :category)
+          AND (:excludeSpam = 0 OR :category IS NOT NULL OR m.category != 'SPAM' OR m.subCategory = 'SCAM')
           AND (:unreadOnly = 0 OR m.isRead = 0)
         ORDER BY m.timestamp DESC
         """,
@@ -42,6 +43,8 @@ interface MessageDao {
     fun observeInbox(
         category: Category?,
         unreadOnly: Boolean,
+        /** Drop plain Spam from the unfiltered (All) view; SCAM stays visible. */
+        excludeSpam: Boolean = false,
     ): Flow<List<MessageEntity>>
 
     @Query("SELECT * FROM messages WHERE threadId = :threadId AND deletedAt IS NULL ORDER BY timestamp ASC")
@@ -66,6 +69,7 @@ interface MessageDao {
         LEFT JOIN thread_pins p ON p.normalizedSender = m.normalizedSender
         WHERE m.isArchived = 0
           AND (:category IS NULL OR m.category = :category)
+          AND (:excludeSpam = 0 OR :category IS NOT NULL OR m.category != 'SPAM' OR m.subCategory = 'SCAM')
           AND (:unreadOnly = 0 OR m.isRead = 0)
         ORDER BY (p.pinnedAt IS NOT NULL) DESC, m.timestamp DESC
         """,
@@ -73,6 +77,7 @@ interface MessageDao {
     fun pagingInbox(
         category: Category?,
         unreadOnly: Boolean,
+        excludeSpam: Boolean = false,
     ): PagingSource<Int, InboxThreadRow>
 
     /**
@@ -97,6 +102,7 @@ interface MessageDao {
         LEFT JOIN thread_pins p ON p.normalizedSender = m.normalizedSender
         WHERE m.isArchived = 0
           AND (:category IS NULL OR m.category = :category)
+          AND (:excludeSpam = 0 OR :category IS NOT NULL OR m.category != 'SPAM' OR m.subCategory = 'SCAM')
           AND (:unreadOnly = 0 OR m.isRead = 0)
         ORDER BY (p.pinnedAt IS NOT NULL) DESC, COALESCE(m.dateSent, m.timestamp) DESC, m.id DESC
         """,
@@ -104,6 +110,7 @@ interface MessageDao {
     fun pagingInboxBySent(
         category: Category?,
         unreadOnly: Boolean,
+        excludeSpam: Boolean = false,
     ): PagingSource<Int, InboxThreadRow>
 
     /** Distinct normalized senders of the given threads (pin toggling). */
@@ -202,6 +209,7 @@ interface MessageDao {
         ${LatestPerThreadSql.JOIN_BY_RECEIVED}
         WHERE m.isArchived = 0
           AND (:category IS NULL OR m.category = :category)
+          AND (:excludeSpam = 0 OR :category IS NOT NULL OR m.category != 'SPAM' OR m.subCategory = 'SCAM')
           AND (:unreadOnly = 0 OR m.isRead = 0)
         ORDER BY m.timestamp DESC
         """,
@@ -209,10 +217,31 @@ interface MessageDao {
     suspend fun inboxThreadIds(
         category: Category?,
         unreadOnly: Boolean,
+        excludeSpam: Boolean = false,
     ): List<Long>
+
+    @Query("SELECT DISTINCT threadId FROM messages WHERE normalizedSender = :normalizedSender AND deletedAt IS NULL")
+    suspend fun threadIdsFor(normalizedSender: String): List<Long>
 
     @Query("SELECT id FROM messages WHERE threadId = :threadId AND deletedAt IS NULL")
     suspend fun messageIdsInThread(threadId: Long): List<Long>
+
+    /** Every live message filed as Spam - the "Empty spam" set. */
+    @Query("SELECT id FROM messages WHERE category = 'SPAM' AND deletedAt IS NULL")
+    suspend fun spamMessageIds(): List<Long>
+
+    /** Live message count in [category], for the Spam folder banner. */
+    @Query("SELECT COUNT(*) FROM messages WHERE category = :category AND deletedAt IS NULL")
+    fun observeCategoryCount(category: Category): Flow<Int>
+
+    /**
+     * Distinct RAW sender ids behind one normalized key. A sender's route
+     * variants (`HDFCBK-P` vs `HDFCBK-T`) collapse to one key, so this is how
+     * the app can tell that filing "HDFCBK" as spam would also hit its
+     * transactional traffic.
+     */
+    @Query("SELECT DISTINCT sender FROM messages WHERE normalizedSender = :normalizedSender")
+    suspend fun rawSendersForCore(normalizedSender: String): List<String>
 
     /**
      * How many messages in the thread sort BEFORE [messageId] - its exact

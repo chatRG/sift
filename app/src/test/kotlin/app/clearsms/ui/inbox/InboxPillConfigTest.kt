@@ -106,7 +106,8 @@ class InboxPillConfigTest {
         val visible = InboxPillConfig(hidden = setOf(InboxPill.IMPORTANT)).visible
         val personal = InboxFilterState(pill = InboxPill.PERSONAL)
         assertThat(personal.constrainedTo(visible)).isEqualTo(personal)
-        assertThat(InboxFilterState().constrainedTo(visible)).isEqualTo(InboxFilterState())
+        // The Spam pill is visible, so the unfiltered view excludes plain spam.
+        assertThat(InboxFilterState().constrainedTo(visible)).isEqualTo(InboxFilterState(excludeSpam = true))
     }
 
     @Test

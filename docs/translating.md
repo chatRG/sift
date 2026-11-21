@@ -1,4 +1,4 @@
-# Translating Clear SMS
+# Translating Sift
 
 The app ships in English and welcomes community translations, including
 partial ones. Every user-visible string lives in plain Android resource XML
@@ -159,7 +159,7 @@ in double quotes, exactly as in the English files.
   at all; a convention test fails the build if a URL or the product name is
   placed anywhere else.
 - Brand and product names that appear inside otherwise translatable strings:
-  *Clear SMS*, *F-Droid*, *UPI*, bank and courier names. Transliterate only
+  *Sift*, *F-Droid*, *UPI*, bank and courier names. Transliterate only
   where that is the local convention. (`avatar_sender_logo`, `%1$s logo`,
   gets the brand name as `%1$s` from data - translate the word "logo", not
   the brand.)
@@ -183,7 +183,7 @@ Build the app as described in [building.md](building.md) and install the
 debug APK on a device or emulator (`./gradlew installDebug`). Then switch
 language either way:
 
-- **Per-app language** (Android 13+): *Settings → Apps → Clear SMS →
+- **Per-app language** (Android 13+): *Settings → Apps → Sift →
   Language*, or long-press the app icon → *App info → Language*. Only
   languages the app ships appear here, so your new directory must be in the
   build. The list is generated at build time (`generateLocaleConfig` in
@@ -191,7 +191,7 @@ language either way:
   so adding your directory is enough - nothing to register by hand.
 - **Device language**: *Settings → System → Languages & input → Languages*
   and move your language to the top. This works on every Android version
-  Clear SMS supports (6.0+).
+  Sift supports (6.0+).
 
 Open every screen you translated - long words can overflow buttons and
 notification titles that were sized for English. Run the full check before

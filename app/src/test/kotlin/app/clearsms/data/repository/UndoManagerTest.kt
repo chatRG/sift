@@ -238,6 +238,7 @@ class UndoManagerTest {
         override fun observeInbox(
             category: Category?,
             unreadOnly: Boolean,
+            excludeSpam: Boolean,
         ): Flow<List<MessageEntity>> = emptyFlow()
 
         override fun observeThread(threadId: Long): Flow<List<MessageEntity>> = emptyFlow()
@@ -246,6 +247,7 @@ class UndoManagerTest {
             category: Category?,
             unreadOnly: Boolean,
             sortOrder: MessageSortOrder,
+            excludeSpam: Boolean,
         ): PagingSource<Int, InboxThreadRow> = error("unused")
 
         override suspend fun draftFor(threadId: Long): String? = null
@@ -272,6 +274,7 @@ class UndoManagerTest {
         override suspend fun inboxThreadIds(
             category: Category?,
             unreadOnly: Boolean,
+            excludeSpam: Boolean,
         ): List<Long> = emptyList()
 
         override suspend fun messageIdsInThread(threadId: Long): List<Long> = emptyList()
@@ -320,6 +323,12 @@ class UndoManagerTest {
         override suspend fun countOtpOlderThan(cutoffMs: Long): Int = 0
 
         override suspend fun deleteOtpOlderThan(cutoffMs: Long): Int = 0
+
+        override suspend fun spamMessageIds(): List<Long> = emptyList()
+
+        override suspend fun emptySpam(): Int = 0
+
+        override fun observeCategoryCount(category: Category): Flow<Int> = emptyFlow()
 
         override suspend fun setReadForMessages(
             ids: List<Long>,

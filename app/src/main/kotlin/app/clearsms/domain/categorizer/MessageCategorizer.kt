@@ -10,6 +10,7 @@ import app.clearsms.domain.parser.GuardLibrary
 import app.clearsms.domain.parser.OtpParser
 import app.clearsms.domain.parser.ReminderParser
 import app.clearsms.domain.parser.ScamDetector
+import app.clearsms.domain.parser.SpamHeuristic
 import app.clearsms.domain.parser.TransactionParser
 import java.time.LocalDate
 
@@ -31,6 +32,7 @@ class MessageCategorizer(
     private val transactionParser: TransactionParser = TransactionParser(),
     private val reminderParser: ReminderParser = ReminderParser(),
     private val scamDetector: ScamDetector = ScamDetector(),
+    private val spamHeuristic: SpamHeuristic = SpamHeuristic(),
 ) {
     fun categorize(
         sender: String,
@@ -277,6 +279,14 @@ class MessageCategorizer(
         // FLAGGED, so it gets the Spam pill AND the warning treatment.
         if (scamDetector.isScam(body)) {
             return CategorizationResult(category = Category.SPAM, subCategory = SubCategory.SCAM)
+        }
+        // Bulk marketing that no rule, directory entry or parser recognised:
+        // filed as plain Spam (no SCAM flag, so no security alarm - this is
+        // advertising, not fraud). The heuristic's own vetoes keep contacts,
+        // transactional DLT headers and financial artifacts out; the
+        // invariants above then lift OTPs and money movements regardless.
+        if (spamHeuristic.isSpam(sender, body, contactLookup.isContact(sender))) {
+            return CategorizationResult(category = Category.SPAM)
         }
         return null
     }

@@ -4,9 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import app.clearsms.data.db.MessageDao
 import app.clearsms.data.prefs.SettingsRepository
-import app.clearsms.domain.model.Category
+import app.clearsms.data.repository.MessageRepository
 import app.clearsms.domain.model.OtpAutoDeletePolicy
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -23,16 +22,18 @@ class OtpAutoDeleteWorker
     constructor(
         @Assisted appContext: Context,
         @Assisted params: WorkerParameters,
-        private val messageDao: MessageDao,
+        private val messageRepository: MessageRepository,
         private val settingsRepository: SettingsRepository,
     ) : CoroutineWorker(appContext, params) {
         override suspend fun doWork(): Result {
             val policy = settingsRepository.otpAutoDeletePolicy.first()
             val cutoff = cutoffFor(policy, System.currentTimeMillis()) ?: return Result.success()
-            val stale = messageDao.messagesOlderThan(Category.OTP, cutoff)
-            if (stale.isNotEmpty()) {
-                messageDao.deleteByIds(stale.map { it.id })
-            }
+            // Go through the repository, not the DAO: only the repository's
+            // delete path also removes the row from Android's Telephony
+            // provider. A bare messageDao.deleteByIds() left every "deleted"
+            // OTP on the device, so it reappeared on reinstall or as soon as
+            // another app held the default-SMS role.
+            messageRepository.deleteOtpOlderThan(cutoff)
             return Result.success()
         }
 

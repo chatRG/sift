@@ -66,7 +66,7 @@
     <string name="compose_attachment_size">%1$s из %2$s</string>
     <string name="compose_attachment_schedule_sms_only">Планирование отправки только для SMS - удалите вложения, чтобы запланировать</string>
     <string name="compose_camera_missing">Нет доступного приложения камеры</string>
-    <string name="share_only_images">В Clear SMS можно передавать только изображения</string>
+    <string name="share_only_images">В Sift можно передавать только изображения</string>
     <string name="conversation_mms_failed_dialog_title">Ошибка загрузки</string>
     <string name="conversation_mms_failed_dialog_message">Не удалось загрузить это мультимедийное сообщение. Повторите загрузку или удалите сообщение.</string>
     <string name="bill_due_title">Счёт к оплате завтра</string>
@@ -86,7 +86,7 @@
     <string name="inbox_sorting_banner">Повторная сортировка сообщений после обновления…</string>
     <string name="shortcut_compose_short">Новое сообщение</string>
     <string name="shortcut_compose_long">Написать новое сообщение</string>
-    <string name="shortcut_compose_disabled">Приложение Clear SMS недоступно</string>
-    <string name="shortcut_disabled_unavailable">Эта переписка больше недоступна в Clear SMS</string>
-    <string name="shortcut_disabled_setting_off">Ярлыки переписок выключены в настройках Clear SMS</string>
+    <string name="shortcut_compose_disabled">Приложение Sift недоступно</string>
+    <string name="shortcut_disabled_unavailable">Эта переписка больше недоступна в Sift</string>
+    <string name="shortcut_disabled_setting_off">Ярлыки переписок выключены в настройках Sift</string>
 </resources>

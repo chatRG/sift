@@ -28,6 +28,8 @@ import app.clearsms.data.repository.MessageRepository
 import app.clearsms.data.repository.MessageRepositoryImpl
 import app.clearsms.data.repository.RuleRepository
 import app.clearsms.data.repository.RuleRepositoryImpl
+import app.clearsms.data.repository.SpamReporting
+import app.clearsms.data.repository.SpamReporter
 import app.clearsms.data.repository.UndoManager
 import app.clearsms.data.rules.BundledRuleLoader
 import app.clearsms.data.rules.RuleEngine
@@ -344,6 +346,10 @@ object DataModule {
         bundledRuleLoader: BundledRuleLoader,
         json: Json,
     ): RuleRepository = RuleRepositoryImpl(ruleDao, bundledRuleLoader, RuleImporter(json), RuleExporter(json), json)
+
+    @Provides
+    @Singleton
+    fun provideSpamReporting(impl: SpamReporter): SpamReporting = impl
 
     @Provides
     @Singleton

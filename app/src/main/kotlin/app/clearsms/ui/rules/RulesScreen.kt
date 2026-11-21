@@ -110,8 +110,7 @@ fun RulesScreen(
                 is RulesEvent.ShareReady -> {
                     val intent =
                         Intent(Intent.ACTION_SEND).apply {
-                            type = "message/rfc822"
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("rules@clearsms.app"))
+                            type = "text/plain"
                             putExtra(Intent.EXTRA_SUBJECT, shareSubject)
                             putExtra(Intent.EXTRA_TEXT, event.json)
                         }

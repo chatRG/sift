@@ -7,6 +7,7 @@ import app.clearsms.data.rules.RuleDefinition
 import app.clearsms.data.rules.RuleExporter
 import app.clearsms.data.rules.RuleImporter
 import app.clearsms.data.rules.RuleSources
+import app.clearsms.data.rules.toDefinition
 import app.clearsms.data.rules.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
@@ -38,11 +39,13 @@ class RuleRepositoryImpl(
         rulesChanged()
     }
 
+    override suspend fun userRuleDefinitions(): List<RuleDefinition> =
+        ruleDao.getBySource(RuleSources.USER).mapNotNull { it.toDefinition(json) }
+
     override suspend fun deleteRule(id: String) {
         ruleDao.deleteById(id)
         rulesChanged()
     }
-
     override suspend fun restoreParkedRule(
         definition: RuleDefinition,
         source: String,

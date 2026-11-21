@@ -66,7 +66,7 @@
     <string name="compose_attachment_size">%1$s z %2$s</string>
     <string name="compose_attachment_schedule_sms_only">Planowanie działa tylko dla SMS - usuń załączniki, aby zaplanować</string>
     <string name="compose_camera_missing">Brak aplikacji aparatu</string>
-    <string name="share_only_images">Do Clear SMS można udostępniać tylko obrazy</string>
+    <string name="share_only_images">Do Sift można udostępniać tylko obrazy</string>
     <string name="conversation_mms_failed_dialog_title">Pobieranie nie powiodło się</string>
     <string name="conversation_mms_failed_dialog_message">Nie udało się pobrać tej wiadomości multimedialnej. Ponów pobieranie lub usuń wiadomość.</string>
     <string name="bill_due_title">Rachunek do zapłaty jutro</string>
@@ -81,12 +81,12 @@
         <item quantity="many">%d nowych wiadomości</item>
         <item quantity="other">%d nowej wiadomości</item>
     </plurals>
-    <string name="catch_up_summary_text">Odebrane, gdy Clear SMS nadrabiał zaległości</string>
+    <string name="catch_up_summary_text">Odebrane, gdy Sift nadrabiał zaległości</string>
     <string name="resort_title">Sortowanie skrzynki odbiorczej</string>
     <string name="inbox_sorting_banner">Ponowne sortowanie wiadomości po aktualizacji…</string>
     <string name="shortcut_compose_short">Nowa wiadomość</string>
     <string name="shortcut_compose_long">Napisz nową wiadomość</string>
-    <string name="shortcut_compose_disabled">Clear SMS jest niedostępny</string>
-    <string name="shortcut_disabled_unavailable">Ta rozmowa nie jest już dostępna w Clear SMS</string>
-    <string name="shortcut_disabled_setting_off">Skróty do rozmów są wyłączone w ustawieniach Clear SMS</string>
+    <string name="shortcut_compose_disabled">Sift jest niedostępny</string>
+    <string name="shortcut_disabled_unavailable">Ta rozmowa nie jest już dostępna w Sift</string>
+    <string name="shortcut_disabled_setting_off">Skróty do rozmów są wyłączone w ustawieniach Sift</string>
 </resources>

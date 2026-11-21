@@ -51,7 +51,7 @@ object DiagnosticReport {
         val masked = if (maskSenders) SenderMasker().mask(selected.map { it.text }) else selected.map { it.text }
         val head =
             buildString {
-                appendLine("Clear SMS diagnostic report")
+                appendLine("Sift diagnostic report")
                 appendLine("window: ${window.label}")
                 appendLine("senderIds: ${if (maskSenders) "masked" else "as recorded"}")
                 appendLine("entries: ${masked.size}")

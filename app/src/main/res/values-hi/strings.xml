@@ -208,7 +208,7 @@
     <string name="rules_import">नियम इंपोर्ट करें</string>
     <string name="rules_export">नियम एक्सपोर्ट करें</string>
     <string name="rules_share">डेवलपर के साथ नियम शेयर करें</string>
-    <string name="rules_share_subject">Clear SMS नियम योगदान</string>
+    <string name="rules_share_subject">Sift नियम योगदान</string>
     <string name="rules_import_success">नियम इंपोर्ट हो गए</string>
     <string name="rules_import_failed">वह फ़ाइल मान्य नियम दस्तावेज़ नहीं है</string>
     <string name="rule_wizard_title">नियम बनाएं</string>
@@ -225,14 +225,14 @@
     <string name="rule_wizard_test_match">मेल खाता है → %1$s %2$s</string>
     <string name="rule_wizard_test_no_match">कोई मेल नहीं</string>
     <string name="rule_wizard_test_invalid">अमान्य पैटर्न: %1$s</string>
-    <string name="onboarding_welcome_title">Clear SMS में आपका स्वागत है</string>
+    <string name="onboarding_welcome_title">Sift में आपका स्वागत है</string>
     <string name="onboarding_welcome_body">आपका इनबॉक्स, व्यवस्थित। संदेश श्रेणियों में बंटते हैं, लेन-देन ट्रैक होते हैं और OTP सामने आते हैं - पूरी तरह इसी डिवाइस पर। न सर्वर, न विज्ञापन, न ट्रैकिंग।</string>
     <string name="onboarding_get_started">शुरू करें</string>
     <string name="onboarding_permissions_title">अनुमतियां</string>
-    <string name="onboarding_permissions_body">आपके संदेश व्यवस्थित करने के लिए Clear SMS को SMS की अनुमति चाहिए, और आपके परिचितों को पहचानने के लिए संपर्कों की अनुमति। कुछ भी कभी आपके फ़ोन से बाहर नहीं जाता।</string>
+    <string name="onboarding_permissions_body">आपके संदेश व्यवस्थित करने के लिए Sift को SMS की अनुमति चाहिए, और आपके परिचितों को पहचानने के लिए संपर्कों की अनुमति। कुछ भी कभी आपके फ़ोन से बाहर नहीं जाता।</string>
     <string name="onboarding_grant_permissions">अनुमतियां दें</string>
-    <string name="onboarding_default_sms_title">Clear SMS को अपना SMS ऐप बनाएं</string>
-    <string name="onboarding_default_sms_body">संदेश पाने और भेजने के लिए Clear SMS आपका डिफ़ॉल्ट SMS ऐप होना चाहिए। आप कभी भी वापस बदल सकते हैं।</string>
+    <string name="onboarding_default_sms_title">Sift को अपना SMS ऐप बनाएं</string>
+    <string name="onboarding_default_sms_body">संदेश पाने और भेजने के लिए Sift आपका डिफ़ॉल्ट SMS ऐप होना चाहिए। आप कभी भी वापस बदल सकते हैं।</string>
     <string name="onboarding_set_default">डिफ़ॉल्ट बनाएं</string>
     <string name="onboarding_sync_title">आपका इनबॉक्स व्यवस्थित हो रहा है</string>
     <string name="onboarding_sync_body">आपके मौजूदा संदेश इंपोर्ट और वर्गीकृत हो रहे हैं। यह बैकग्राउंड में जारी रहता है।</string>
@@ -399,7 +399,7 @@
     <string name="settings_transaction_notifications">लेन-देन सूचनाएं</string>
     <string name="settings_transaction_notifications_summary">मूल संदेश के बजाय पार्स की गई राशि दिखाएं</string>
     <string name="settings_system_notifications">सूचनाएं कस्टमाइज़ करें</string>
-    <string name="settings_system_notifications_summary">Clear SMS के लिए Android की सेटिंग खोलता है - हर श्रेणी की ध्वनि, वाइब्रेशन और महत्व वहीं हैं</string>
+    <string name="settings_system_notifications_summary">Sift के लिए Android की सेटिंग खोलता है - हर श्रेणी की ध्वनि, वाइब्रेशन और महत्व वहीं हैं</string>
     <string name="settings_system_notifications_no_handler">इस डिवाइस में सूचना सेटिंग की कोई स्क्रीन नहीं है</string>
     <string name="settings_swipe_right">दाएं स्वाइप की कार्रवाई</string>
     <string name="settings_swipe_left">बाएं स्वाइप की कार्रवाई</string>
@@ -482,10 +482,6 @@
     <string name="settings_source_code">सोर्स कोड</string>
     <string name="settings_source_code_summary">GitHub पर प्रोजेक्ट देखें</string>
     <string name="settings_section_support">सहयोग</string>
-    <string name="settings_donate_paypal">Paypal</string>
-    <string name="settings_donate_paypal_summary">अगर ऐप आपके लिए उपयोगी है, तो आप PayPal से इसका सहयोग कर सकते हैं</string>
-    <string name="settings_donate_upi">UPI</string>
-    <string name="settings_donate_upi_summary">UPI भुगतान से ऐप के विकास में सहयोग करें</string>
     <string name="settings_star_on_github">GitHub पर स्टार दें</string>
     <string name="settings_star_on_github_summary">मुफ़्त है और एक सेकंड लगता है - स्टार से दूसरों को ऐप ढूंढने में मदद मिलती है</string>
     <string name="settings_link_no_handler">यह लिंक खोलने के लिए कोई ऐप नहीं मिला</string>
@@ -521,7 +517,7 @@
     <string name="settings_search_close">खोज बंद करें</string>
     <string name="settings_search_empty">\u201C%1$s\u201D से मेल खाती कोई सेटिंग नहीं</string>
     <string name="privacy_ondevice_title">सारी प्रोसेसिंग आपके डिवाइस पर होती है</string>
-    <string name="privacy_ondevice_body">वर्गीकरण, OTP निकालना और लेन-देन पार्स करना पूरी तरह इसी फ़ोन पर होता है। Clear SMS के कोई सर्वर नहीं हैं और यह चलते समय कोई नेटवर्क कॉल नहीं करता। आपके संदेश कभी भी कहीं और अपलोड, शेयर या विश्लेषित नहीं किए जाते।</string>
+    <string name="privacy_ondevice_body">वर्गीकरण, OTP निकालना और लेन-देन पार्स करना पूरी तरह इसी फ़ोन पर होता है। Sift के कोई सर्वर नहीं हैं और यह चलते समय कोई नेटवर्क कॉल नहीं करता। आपके संदेश कभी भी कहीं और अपलोड, शेयर या विश्लेषित नहीं किए जाते।</string>
     <string name="privacy_no_network_title">न एनालिटिक्स, न ट्रैकिंग, न विज्ञापन</string>
     <string name="privacy_no_network_body">ऐप में कोई एनालिटिक्स SDK, डेटा भेजने वाले क्रैश रिपोर्टर, विज्ञापन फ़्रेमवर्क या प्रोप्राइटरी सेवाएं नहीं हैं।</string>
     <string name="privacy_backups_title">बैकअप आपके हैं</string>
@@ -634,7 +630,7 @@
         <item quantity="one">%1$s, %2$d रिमाइंडर</item>
         <item quantity="other">%1$s, %2$d रिमाइंडर</item>
     </plurals>
-    <string name="inbox_default_sms_banner">Clear SMS आपका डिफ़ॉल्ट SMS ऐप नहीं है - नए संदेश यहां नहीं आएंगे</string>
+    <string name="inbox_default_sms_banner">Sift आपका डिफ़ॉल्ट SMS ऐप नहीं है - नए संदेश यहां नहीं आएंगे</string>
     <string name="inbox_default_sms_dismiss">खारिज करें</string>
     <string name="rule_wizard_title_edit">नियम संपादित करें</string>
     <string name="rule_detail_id">नियम ID</string>
@@ -667,7 +663,7 @@
     <string name="bin_delete_forever">हमेशा के लिए हटाएं</string>
     <string name="bin_empty_bin">बिन खाली करें</string>
     <string name="bin_restored">संदेश पुनर्स्थापित किया गया</string>
-    <string name="bin_restored_app_only">केवल Clear SMS में पुनर्स्थापित हुआ - इसे सिस्टम SMS स्टोर में वापस नहीं लिखा जा सका</string>
+    <string name="bin_restored_app_only">केवल Sift में पुनर्स्थापित हुआ - इसे सिस्टम SMS स्टोर में वापस नहीं लिखा जा सका</string>
     <string name="bin_delete_forever_title">हमेशा के लिए हटाएं?</string>
     <string name="bin_delete_forever_message">यह संदेश स्थायी रूप से हटा दिया जाएगा। इसे पूर्ववत नहीं किया जा सकता।</string>
     <string name="bin_empty_confirm_title">रीसायकल बिन खाली करें?</string>

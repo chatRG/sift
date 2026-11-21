@@ -53,15 +53,31 @@ class SelectionBarLayoutTest {
     }
 
     @Test
-    fun `overflow for a single thread adds mute, block and always-sort-as`() {
+    fun `overflow for a single thread adds mute, report spam, block and always-sort-as`() {
         assertThat(SelectionBarLayout.overflowActions(allSelectedPinned = false, singleThread = true))
             .containsExactly(
                 SelectionAction.PIN,
                 SelectionAction.SELECT_ALL,
                 SelectionAction.MUTE,
+                SelectionAction.REPORT_SPAM,
                 SelectionAction.BLOCK,
                 SelectionAction.ALWAYS_SORT_AS,
             ).inOrder()
+    }
+
+    @Test
+    fun `a thread already filed as spam offers Not spam instead of Report spam`() {
+        val filed = SelectionBarLayout.overflowActions(allSelectedPinned = false, singleThread = true, singleThreadSpam = true)
+        assertThat(filed).contains(SelectionAction.NOT_SPAM)
+        assertThat(filed).doesNotContain(SelectionAction.REPORT_SPAM)
+        // Same slot as the entry it replaces, directly before Block.
+        assertThat(filed.indexOf(SelectionAction.NOT_SPAM)).isEqualTo(filed.indexOf(SelectionAction.BLOCK) - 1)
+    }
+
+    @Test
+    fun `spam actions never appear for a multi-thread selection`() {
+        val multi = SelectionBarLayout.overflowActions(allSelectedPinned = false, singleThread = false, singleThreadSpam = true)
+        assertThat(multi).containsNoneOf(SelectionAction.REPORT_SPAM, SelectionAction.NOT_SPAM)
     }
 
     @Test

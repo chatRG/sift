@@ -66,7 +66,7 @@
     <string name="compose_attachment_size">%2$s में से %1$s</string>
     <string name="compose_attachment_schedule_sms_only">शेड्यूल करना केवल SMS के लिए है - शेड्यूल करने के लिए अटैचमेंट हटाएं</string>
     <string name="compose_camera_missing">कोई कैमरा ऐप उपलब्ध नहीं है</string>
-    <string name="share_only_images">Clear SMS में केवल फ़ोटो ही शेयर की जा सकती हैं</string>
+    <string name="share_only_images">Sift में केवल फ़ोटो ही शेयर की जा सकती हैं</string>
     <string name="conversation_mms_failed_dialog_title">डाउनलोड विफल</string>
     <string name="conversation_mms_failed_dialog_message">यह मल्टीमीडिया संदेश डाउनलोड नहीं हो सका। डाउनलोड का पुनः प्रयास करें या संदेश हटाएं।</string>
     <string name="bill_due_title">बिल कल देय है</string>
@@ -79,12 +79,12 @@
         <item quantity="one">%d नया संदेश</item>
         <item quantity="other">%d नए संदेश</item>
     </plurals>
-    <string name="catch_up_summary_text">Clear SMS द्वारा छूटे संदेश लाते समय प्राप्त हुए</string>
+    <string name="catch_up_summary_text">Sift द्वारा छूटे संदेश लाते समय प्राप्त हुए</string>
     <string name="resort_title">आपका इनबॉक्स सॉर्ट हो रहा है</string>
     <string name="inbox_sorting_banner">अपडेट के बाद आपके संदेश फिर से सॉर्ट हो रहे हैं…</string>
     <string name="shortcut_compose_short">नया संदेश</string>
     <string name="shortcut_compose_long">नया संदेश लिखें</string>
-    <string name="shortcut_compose_disabled">Clear SMS उपलब्ध नहीं है</string>
-    <string name="shortcut_disabled_unavailable">यह बातचीत अब Clear SMS में उपलब्ध नहीं है</string>
-    <string name="shortcut_disabled_setting_off">Clear SMS की सेटिंग में बातचीत शॉर्टकट बंद हैं</string>
+    <string name="shortcut_compose_disabled">Sift उपलब्ध नहीं है</string>
+    <string name="shortcut_disabled_unavailable">यह बातचीत अब Sift में उपलब्ध नहीं है</string>
+    <string name="shortcut_disabled_setting_off">Sift की सेटिंग में बातचीत शॉर्टकट बंद हैं</string>
 </resources>

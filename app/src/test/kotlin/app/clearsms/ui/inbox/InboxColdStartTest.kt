@@ -18,6 +18,7 @@ import app.clearsms.domain.model.InboxPill
 import app.clearsms.domain.model.MessageSortOrder
 import app.clearsms.sms.ContactsSource
 import app.clearsms.testing.FakeMessageRepository
+import app.clearsms.testing.FakeSpamReporting
 import app.clearsms.testing.FakeSettingsRepository
 import app.clearsms.testing.InMemoryPreferencesDataStore
 import app.clearsms.testing.ViewModelDatabaseFixture
@@ -126,6 +127,7 @@ class InboxColdStartTest {
                 undoManager = UndoManager(repository, scope, { true }),
                 senderBlocker = SenderBlocker(settings, repository, senderMuter, InMemoryPreferencesDataStore(), scope),
                 senderMuter = senderMuter,
+                spamReporter = FakeSpamReporting(),
                 senderIdLookup = SenderIdLookup { null },
                 contactsSource = ContactsSource(context),
                 settings = dataStoreLike,
@@ -294,7 +296,7 @@ class InboxColdStartTest {
         val list = inbox.indexOf("LazyColumn(state = listState")
         val empty = inbox.indexOf("icon = Icons.Outlined.Inbox,")
         assertThat(gate).isGreaterThan(-1)
-        assertThat(inbox.indexOf("} else if (emptyLoaded && state.filter == InboxFilterState()) {", gate)).isGreaterThan(gate)
+        assertThat(inbox.indexOf("} else if (emptyLoaded && state.filter.isUnfiltered) {", gate)).isGreaterThan(gate)
         assertThat(empty).isGreaterThan(gate)
         assertThat(list).isGreaterThan(gate)
         assertThat(pills).isGreaterThan(gate)

@@ -27,7 +27,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "app.clearsms"
+        applicationId = "app.sift.sms"
         minSdk = 23
         targetSdk = 35
         versionCode = 75
@@ -194,17 +194,15 @@ kotlin {
     }
 }
 
-// Publish human-friendly artifact names: ClearSMS.apk for release builds
-// (what ends up attached to a GitHub release, and what the F-Droid build
-// metadata's Binaries URL points at) and ClearSMS-debug.apk for debug builds,
-// instead of Gradle's default app-<buildType>.apk.
+// Publish human-friendly artifact names: Sift.apk for release builds and
+// Sift-debug.apk for debug builds, instead of Gradle's default app-<buildType>.apk.
 androidComponents {
     onVariants { variant ->
         val suffix = if (variant.buildType == "release") "" else "-${variant.buildType}"
         variant.outputs.forEach { output ->
             (output as? com.android.build.api.variant.impl.VariantOutputImpl)
                 ?.outputFileName
-                ?.set("ClearSMS$suffix.apk")
+                ?.set("Sift$suffix.apk")
         }
     }
 }
@@ -284,14 +282,6 @@ androidComponents {
 // The guard gates assembleRelease itself: packageRelease -> guard -> assembleRelease.
 tasks.matching { it.name == "assembleRelease" }.configureEach {
     dependsOn("checkReleaseApkNoHttpClient")
-}
-
-// TranslationStatusTest reads the repo README to verify the generated
-// translation table. README.md is not otherwise a test input, so without this
-// an edit to it would leave the test task UP-TO-DATE and the check would not
-// re-run locally (CI always starts cold). Resource files are already inputs.
-tasks.withType<Test>().configureEach {
-    inputs.file(rootProject.file("README.md")).withPathSensitivity(PathSensitivity.RELATIVE)
 }
 
 // Exported Room schemas (schemas/<db>/<version>.json) are committed so future

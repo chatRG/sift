@@ -27,12 +27,14 @@ data class InboxPagerKey(
     val category: Category?,
     val unreadOnly: Boolean,
     val sortOrder: MessageSortOrder,
+    /** See [InboxFilterState.excludeSpam] - part of the SQL, so part of the key. */
+    val excludeSpam: Boolean = false,
 ) {
     companion object {
         fun of(
             filter: InboxFilterState,
             sortOrder: MessageSortOrder,
-        ): InboxPagerKey = InboxPagerKey(filter.category, filter.unreadOnly, sortOrder)
+        ): InboxPagerKey = InboxPagerKey(filter.category, filter.unreadOnly, sortOrder, filter.excludeSpam)
     }
 }
 

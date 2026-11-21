@@ -32,6 +32,8 @@ interface MessageRepository {
     fun observeInbox(
         category: Category?,
         unreadOnly: Boolean,
+        /** Drop plain Spam from the unfiltered view; scam-flagged rows stay. */
+        excludeSpam: Boolean = false,
     ): Flow<List<MessageEntity>>
 
     fun observeThread(threadId: Long): Flow<List<MessageEntity>>
@@ -42,6 +44,7 @@ interface MessageRepository {
         unreadOnly: Boolean,
         /** Received (default) or sender's sent time - see [MessageSortOrder]. */
         sortOrder: MessageSortOrder = MessageSortOrder.RECEIVED,
+        excludeSpam: Boolean = false,
     ): PagingSource<Int, InboxThreadRow>
 
     // region drafts
@@ -93,6 +96,7 @@ interface MessageRepository {
     suspend fun inboxThreadIds(
         category: Category?,
         unreadOnly: Boolean,
+        excludeSpam: Boolean = false,
     ): List<Long>
 
     suspend fun messageIdsInThread(threadId: Long): List<Long>
@@ -242,6 +246,18 @@ interface MessageRepository {
      * @return the number of messages deleted.
      */
     suspend fun deleteOtpOlderThan(cutoffMs: Long): Int
+
+    /** Every live message filed as Spam - what "Empty spam" deletes. */
+    suspend fun spamMessageIds(): List<Long>
+
+    /**
+     * Permanently deletes every live Spam message through the same batched
+     * transaction + system-provider sync as [deleteMessages].
+     */
+    suspend fun emptySpam(): Int
+
+    /** Live message count in [category] (the Spam folder banner). */
+    fun observeCategoryCount(category: Category): Flow<Int>
 
     suspend fun setReadForMessages(
         ids: List<Long>,
@@ -439,10 +455,10 @@ interface MessageRepository {
     )
 
     /**
-     * Moves [sender]'s live thread messages to the recycle bin (or deletes
-     * them outright when the bin is off) - the "blocking hides the existing
-     * conversation" effect. Provider copies are removed like a committed
-     * delete. No-op when the sender has no thread.
+     * Moves every live thread the sender owns to the recycle bin - the
+     * "blocking hides the existing conversation" effect, restorable from the
+     * bin. Provider copies are kept until the bin is emptied. No-op when the
+     * sender has no thread.
      */
     suspend fun binThreadForSender(sender: String) {}
 

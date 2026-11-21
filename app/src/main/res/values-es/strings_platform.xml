@@ -66,7 +66,7 @@
     <string name="compose_attachment_size">%1$s de %2$s</string>
     <string name="compose_attachment_schedule_sms_only">La programación es solo para SMS: quite los adjuntos para programar</string>
     <string name="compose_camera_missing">No hay ninguna app de cámara disponible</string>
-    <string name="share_only_images">Solo se pueden compartir imágenes en Clear SMS</string>
+    <string name="share_only_images">Solo se pueden compartir imágenes en Sift</string>
     <string name="conversation_mms_failed_dialog_title">Descarga fallida</string>
     <string name="conversation_mms_failed_dialog_message">No se pudo descargar este mensaje multimedia. Reintente la descarga o elimine el mensaje.</string>
     <string name="bill_due_title">La factura vence mañana</string>
@@ -80,12 +80,12 @@
         <item quantity="many">%d mensajes nuevos</item>
         <item quantity="other">%d mensajes nuevos</item>
     </plurals>
-    <string name="catch_up_summary_text">Recibido mientras Clear SMS se ponía al día</string>
+    <string name="catch_up_summary_text">Recibido mientras Sift se ponía al día</string>
     <string name="resort_title">Ordenando su bandeja de entrada</string>
     <string name="inbox_sorting_banner">Ordenando sus mensajes de nuevo tras la actualización…</string>
     <string name="shortcut_compose_short">Nuevo mensaje</string>
     <string name="shortcut_compose_long">Escribir un mensaje nuevo</string>
-    <string name="shortcut_compose_disabled">Clear SMS no está disponible</string>
-    <string name="shortcut_disabled_unavailable">Esta conversación ya no está disponible en Clear SMS</string>
-    <string name="shortcut_disabled_setting_off">Los atajos de conversación están desactivados en los ajustes de Clear SMS</string>
+    <string name="shortcut_compose_disabled">Sift no está disponible</string>
+    <string name="shortcut_disabled_unavailable">Esta conversación ya no está disponible en Sift</string>
+    <string name="shortcut_disabled_setting_off">Los atajos de conversación están desactivados en los ajustes de Sift</string>
 </resources>

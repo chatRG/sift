@@ -99,7 +99,7 @@ class SettingsNestedSearchTest {
         assertThat(hits.single().section).isEqualTo(SettingsSection.DONATE)
         assertThat(sectionTitle(hits.single().section)).isEqualTo("Support")
         assertThat(hits.single().nested).isTrue()
-        assertThat(search("support")).containsAtLeast(SettingsItem.UPI, SettingsItem.STAR_ON_GITHUB)
+        assertThat(search("support")).contains(SettingsItem.STAR_ON_GITHUB)
 
         val target = Routes.settingsPath(SettingsItem.STAR_ON_GITHUB).last()
         val (section, highlight) = parseSectionRoute(target)

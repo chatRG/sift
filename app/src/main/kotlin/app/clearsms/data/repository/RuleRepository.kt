@@ -16,6 +16,9 @@ interface RuleRepository {
 
     suspend fun addUserRule(definition: RuleDefinition)
 
+    /** The user's own rules, decoded from their stored JSON. */
+    suspend fun userRuleDefinitions(): List<RuleDefinition>
+
     suspend fun deleteRule(id: String)
 
     /**

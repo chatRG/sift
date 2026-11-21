@@ -25,6 +25,21 @@
     <string name="mute_applied">Muted. Messages still arrive here, but nothing will notify - OTPs included. Scam warnings still show.</string>
     <string name="mute_removed">Unmuted. Notifications are back on for this sender.</string>
     <string name="action_change_category">Change category</string>
+    <!-- Spam: filing (reversible, keeps the message) is separate from Block (destructive). -->
+    <string name="action_report_spam">Report spam</string>
+    <string name="action_not_spam">Not spam</string>
+    <string name="spam_reported">Filed as spam. You\'ll find it under Spam.</string>
+    <string name="spam_reported_mixed">Filed as spam. %1$s also sends OTPs and bank alerts - messages with a code or a money movement still come through.</string>
+    <string name="spam_cleared">Removed from Spam.</string>
+    <string name="spam_banner_title">Spam stays out of your inbox</string>
+    <string name="spam_banner_body">These messages are kept here and never notify you.</string>
+    <string name="action_empty_spam">Empty spam (%1$d)</string>
+    <string name="empty_spam_confirm_title">Delete all spam?</string>
+    <string name="empty_spam_confirm_text">%1$d message(s) will be deleted permanently, from this app and from the phone\'s SMS storage. This cannot be undone.</string>
+    <plurals name="spam_emptied">
+        <item quantity="one">%1$d spam message deleted</item>
+        <item quantity="other">%1$d spam messages deleted</item>
+    </plurals>
     <!-- Inbox selection overflow entry for the one-step sender rule; reads like the dialog it opens (sender_rule_title). -->
     <string name="action_always_sort_as">Always sort as…</string>
     <string name="action_copy_message">Copy message</string>
@@ -249,7 +264,7 @@
     <string name="rules_import">Import rules</string>
     <string name="rules_export">Export rules</string>
     <string name="rules_share">Share rules with developer</string>
-    <string name="rules_share_subject">Clear SMS rules contribution</string>
+    <string name="rules_share_subject">Sift rules contribution</string>
     <string name="rules_import_success">Rules imported</string>
     <string name="rules_import_failed">That file is not a valid rules document</string>
 
@@ -270,14 +285,14 @@
     <string name="rule_wizard_test_invalid">Invalid pattern: %1$s</string>
 
     <!-- Onboarding -->
-    <string name="onboarding_welcome_title">Welcome to Clear SMS</string>
+    <string name="onboarding_welcome_title">Welcome to Sift</string>
     <string name="onboarding_welcome_body">Your inbox, organized. Messages are categorized, transactions tracked and OTPs surfaced - entirely on this device. No servers, no ads, no tracking.</string>
     <string name="onboarding_get_started">Get started</string>
     <string name="onboarding_permissions_title">Permissions</string>
-    <string name="onboarding_permissions_body">Clear SMS needs SMS access to organize your messages, and contacts access to recognize people you know. Nothing ever leaves your phone.</string>
+    <string name="onboarding_permissions_body">Sift needs SMS access to organize your messages, and contacts access to recognize people you know. Nothing ever leaves your phone.</string>
     <string name="onboarding_grant_permissions">Grant permissions</string>
-    <string name="onboarding_default_sms_title">Make Clear SMS your SMS app</string>
-    <string name="onboarding_default_sms_body">To receive and send messages, Clear SMS must be your default SMS app. You can switch back at any time.</string>
+    <string name="onboarding_default_sms_title">Make Sift your SMS app</string>
+    <string name="onboarding_default_sms_body">To receive and send messages, Sift must be your default SMS app. You can switch back at any time.</string>
     <string name="onboarding_set_default">Set as default</string>
     <string name="onboarding_sync_title">Organizing your inbox</string>
     <string name="onboarding_sync_body">Importing and categorizing your existing messages. This continues in the background.</string>
@@ -453,7 +468,7 @@
     <string name="settings_transaction_notifications">Transaction notifications</string>
     <string name="settings_transaction_notifications_summary">Show the parsed amount instead of the raw message</string>
     <string name="settings_system_notifications">Customise notifications</string>
-    <string name="settings_system_notifications_summary">Opens Android\'s settings for Clear SMS - sound, vibration and importance for each category live there</string>
+    <string name="settings_system_notifications_summary">Opens Android\'s settings for Sift - sound, vibration and importance for each category live there</string>
     <string name="settings_system_notifications_no_handler">This device has no screen for notification settings</string>
     <string name="settings_swipe_right">Swipe right action</string>
     <string name="settings_swipe_left">Swipe left action</string>
@@ -536,10 +551,6 @@
     <string name="settings_source_code">Source code</string>
     <string name="settings_source_code_summary">View the project on GitHub</string>
     <string name="settings_section_support">Support</string>
-    <string name="settings_donate_paypal">Paypal</string>
-    <string name="settings_donate_paypal_summary">If the app is useful to you, you can support it via PayPal</string>
-    <string name="settings_donate_upi">UPI</string>
-    <string name="settings_donate_upi_summary">Support app development with a UPI payment</string>
     <string name="settings_star_on_github">Star on GitHub</string>
     <string name="settings_star_on_github_summary">Free and takes a second - stars help other people find the app</string>
     <string name="settings_link_no_handler">No app found to open this link</string>
@@ -579,7 +590,7 @@
 
     <!-- Privacy policy content -->
     <string name="privacy_ondevice_title">All processing happens on your device</string>
-    <string name="privacy_ondevice_body">Categorization, OTP extraction and transaction parsing run entirely on this phone. Clear SMS has no servers and makes no network calls at runtime. Your messages are never uploaded, shared or analyzed anywhere else.</string>
+    <string name="privacy_ondevice_body">Categorization, OTP extraction and transaction parsing run entirely on this phone. Sift has no servers and makes no network calls at runtime. Your messages are never uploaded, shared or analyzed anywhere else.</string>
     <string name="privacy_no_network_title">No analytics, no tracking, no ads</string>
     <string name="privacy_no_network_body">The app contains no analytics SDKs, crash reporters that transmit data, advertising frameworks or proprietary services.</string>
     <string name="privacy_backups_title">Backups are yours</string>
@@ -714,7 +725,7 @@
     </plurals>
 
     <!-- Default-SMS-role banner -->
-    <string name="inbox_default_sms_banner">Clear SMS is not your default SMS app - new messages won\'t arrive here</string>
+    <string name="inbox_default_sms_banner">Sift is not your default SMS app - new messages won\'t arrive here</string>
     <string name="inbox_default_sms_dismiss">Dismiss</string>
 
     <!-- Rule editing -->
@@ -756,7 +767,7 @@
     <string name="bin_delete_forever">Delete forever</string>
     <string name="bin_empty_bin">Empty bin</string>
     <string name="bin_restored">Message restored</string>
-    <string name="bin_restored_app_only">Restored in Clear SMS only - could not write it back to the system SMS store</string>
+    <string name="bin_restored_app_only">Restored in Sift only - could not write it back to the system SMS store</string>
     <string name="bin_delete_forever_title">Delete forever?</string>
     <string name="bin_delete_forever_message">This message will be permanently removed. This cannot be undone.</string>
     <string name="bin_empty_confirm_title">Empty recycle bin?</string>
