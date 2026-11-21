@@ -31,7 +31,15 @@ echo "== grant permissions and the SMS role =="
 for perm in READ_SMS RECEIVE_SMS SEND_SMS RECEIVE_MMS READ_CONTACTS POST_NOTIFICATIONS; do
   adb shell pm grant "$PKG" "android.permission.$perm" 2>/dev/null || true
 done
+# The SMS role is exclusive: drop the image's messaging app first, then
+# install Sift as the holder, and fail loudly if the role did not stick -
+# without it the app never receives the injected SMS.
+for holder in com.google.android.apps.messaging com.android.messaging; do
+  adb shell cmd role remove-role-holder android.app.role.SMS "$holder" 2>/dev/null || true
+done
 adb shell cmd role add-role-holder android.app.role.SMS "$PKG" 2>/dev/null || true
+echo "SMS role holders:"
+adb shell cmd role get-role-holders android.app.role.SMS || true
 
 echo "== launch and finish onboarding =="
 adb shell am start -n "$ACTIVITY"
