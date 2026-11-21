@@ -6,6 +6,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import app.clearsms.data.repository.SenderBlocker
 import app.clearsms.data.repository.UndoManager
+import app.clearsms.di.ApplicationScope
 import app.clearsms.diagnostics.Diag
 import app.clearsms.diagnostics.DiagCrashHandler
 import app.clearsms.diagnostics.DiagFileSink
@@ -13,8 +14,12 @@ import app.clearsms.diagnostics.DiagLevel
 import app.clearsms.shortcuts.ConversationShortcutPublisher
 import app.clearsms.sms.SenderRegion
 import app.clearsms.work.AutoResortScheduler
+import app.clearsms.work.MessageScheduler
+import app.clearsms.work.ReminderAlarmScheduler
 import app.clearsms.work.SimBackfillWorker
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -43,6 +48,16 @@ class ClearSmsApplication :
     @Inject
     lateinit var conversationShortcutPublisher: ConversationShortcutPublisher
 
+    @Inject
+    lateinit var messageScheduler: MessageScheduler
+
+    @Inject
+    lateinit var reminderAlarmScheduler: ReminderAlarmScheduler
+
+    @Inject
+    @ApplicationScope
+    lateinit var applicationScope: CoroutineScope
+
     override fun onCreate() {
         super.onCreate()
         installDiagnostics()
@@ -53,6 +68,7 @@ class ClearSmsApplication :
         // (a deleted message must never resurrect in other SMS apps) and
         // purges recycle-bin rows past their 30-day retention.
         undoManager.onAppStart()
+        rearmAlarms()
         // First cold start of a new app version: re-sort the whole database
         // with the updated rules automatically (Settings → Messages → Sort messages again
         // without the user having to remember it).
@@ -91,6 +107,26 @@ class ClearSmsApplication :
         Diag.install(DiagFileSink(File(filesDir, "diagnostics")))
         DiagCrashHandler.install()
         Diag.i("App", "process start")
+    }
+
+    /**
+     * Re-registers every pending alarm on a cold start.
+     *
+     * Alarms do not survive a forced stop, and Android 12+ cancels all exact
+     * alarms when the user revokes SCHEDULE_EXACT_ALARM - neither delivers a
+     * broadcast, so [BootReceiver] alone would leave every pending scheduled
+     * send and bill reminder dead until the next reboot. Both re-arms are
+     * idempotent (an equal PendingIntent replaces its alarm) and an overdue
+     * schedule fires immediately, which is exactly what should happen after
+     * the app was stopped across its send time.
+     */
+    private fun rearmAlarms() {
+        applicationScope.launch {
+            runCatching { reminderAlarmScheduler.rescheduleAll() }
+                .onFailure { Diag.w("App", "reminder re-arm on start failed", it) }
+            runCatching { messageScheduler.rearmAll() }
+                .onFailure { Diag.w("App", "scheduled-send re-arm on start failed", it) }
+        }
     }
 
     override val workManagerConfiguration: Configuration

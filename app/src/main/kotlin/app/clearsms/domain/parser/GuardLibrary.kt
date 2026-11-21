@@ -192,12 +192,13 @@ object GuardLibrary {
 
     /**
      * Load-time safety validation; returns the rejection reason or null when
-     * the pattern is acceptable. Same discipline as the rule importer, plus
-     * the shapes it bans only by convention:
-     * - length cap ([MAX_PATTERN_LENGTH], shared with the rule importer);
+     * the pattern is acceptable. Applied to the bundled guard library, the
+     * parser tables AND every imported user rule ([app.clearsms.data.rules.RuleImporter]):
+     * - length cap ([MAX_PATTERN_LENGTH]);
      * - leading or trailing `.*` / `.+` / `[\s\S]*` wrappers - redundant
      *   (matching already searches anywhere) and catastrophic under
      *   backtracking;
+     * - a blank pattern (an empty regex matches every message);
      * - unbounded quantifier applied to a group that itself contains an
      *   unbounded quantifier (the classic `(a+)+` explosion);
      * - lookbehind containing a quantifier (variable-length lookbehind).

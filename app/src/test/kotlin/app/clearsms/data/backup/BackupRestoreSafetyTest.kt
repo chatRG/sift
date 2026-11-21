@@ -106,6 +106,37 @@ class BackupRestoreSafetyTest {
         category = category,
     )
 
+    @Test
+    fun `message direction and sender timestamp survive the backup and restore cycle`() =
+        runBlocking {
+            // A sent message and a received one: without explicit fields the
+            // restore used to bring BOTH back as received, so the user's own
+            // words appeared to have been written by the other party.
+            db.messageDao().insertAll(
+                listOf(
+                    message(1).copy(isOutgoing = true, body = "my own words"),
+                    message(2).copy(isOutgoing = false, body = "their words", dateSent = 1_234L),
+                ),
+            )
+            val bytes = ByteArrayOutputStream().also { manager.exportTo(it) }.toByteArray()
+
+            val context = ApplicationProvider.getApplicationContext<Context>()
+            val target =
+                Room
+                    .inMemoryDatabaseBuilder(context, ClearSmsDatabase::class.java)
+                    .allowMainThreadQueries()
+                    .build()
+            try {
+                BackupManager(target, json).importFrom(ByteArrayInputStream(bytes))
+                val restored = target.messageDao().getAll().associateBy { it.body }
+                assertThat(restored.getValue("my own words").isOutgoing).isTrue()
+                assertThat(restored.getValue("their words").isOutgoing).isFalse()
+                assertThat(restored.getValue("their words").dateSent).isEqualTo(1_234L)
+            } finally {
+                target.close()
+            }
+        }
+
     private fun builtinRule(id: String = "generic-otp") =
         RuleEntity(
             id = id,

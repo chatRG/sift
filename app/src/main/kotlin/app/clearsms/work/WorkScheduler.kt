@@ -7,8 +7,14 @@ import androidx.work.WorkManager
 import java.util.concurrent.TimeUnit
 
 /**
- * Enqueues all periodic background jobs as unique work. Safe to call on every
- * app start and after boot - existing schedules are kept.
+ * Enqueues the always-on periodic background jobs as unique work, keeping any
+ * schedule that already exists.
+ *
+ * The automatic backup is deliberately NOT here: its schedule is derived from
+ * the user's backup frequency, whose only writer is
+ * [BackupWorker.applyFrequency]. Enqueuing it unconditionally re-created a
+ * 24-hour wake-up at every boot that the user had explicitly switched off
+ * (the worker then cancelled itself on each run, every day, forever).
  */
 object WorkScheduler {
     fun scheduleAll(context: Context) {
@@ -17,11 +23,6 @@ object WorkScheduler {
             OtpAutoDeleteWorker.WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
             PeriodicWorkRequestBuilder<OtpAutoDeleteWorker>(6, TimeUnit.HOURS).build(),
-        )
-        workManager.enqueueUniquePeriodicWork(
-            BackupWorker.WORK_NAME,
-            ExistingPeriodicWorkPolicy.KEEP,
-            PeriodicWorkRequestBuilder<BackupWorker>(24, TimeUnit.HOURS).build(),
         )
     }
 }

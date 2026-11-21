@@ -7,6 +7,7 @@ import android.content.Intent
 import android.telephony.SmsManager
 import android.telephony.SubscriptionManager
 import app.clearsms.data.db.MessageDao
+import app.clearsms.data.db.MmsStatus
 import app.clearsms.di.ApplicationScope
 import app.clearsms.diagnostics.Diag
 import app.clearsms.diagnostics.DiagField.Companion.code
@@ -65,23 +66,30 @@ class MmsDownloadReceiver : BroadcastReceiver() {
         if (messageId < 0) return
         val attempt = intent.getIntExtra(EXTRA_ATTEMPT, 0)
         val subscriptionId = subscriptionIdOf(intent)
-        val report = MmsDownloadReport.of(intent, resultCode, attempt, conditions.probe(subscriptionId))
-        report.log(messageId)
-        val succeeded = report.succeeded
         val pendingResult = goAsync()
         applicationScope.launch {
             try {
+                // The radio/telephony probe behind this report is a set of
+                // cross-process binder calls; it runs here, off the main
+                // thread, because the values only feed a diagnostic line and
+                // onReceive must not stall the broadcast queue while the app
+                // is already recovering from a failed download.
+                val report = MmsDownloadReport.of(intent, resultCode, attempt, conditions.probe(subscriptionId))
+                report.log(messageId)
                 mmsInbound.onDownloadResult(
                     messageId = messageId,
-                    succeeded = succeeded,
+                    succeeded = report.succeeded,
                     attempt = attempt,
                     subscriptionId = subscriptionId,
                     contentLocation = { messageDao.getById(messageId)?.mmsContentLocation },
                 )
             } catch (e: Exception) {
-                // Content-free by convention; the row simply stays PENDING
-                // until a retry, rather than crashing the process.
+                // Content-free by convention. Landing the row on FAILED is
+                // what makes this failure visible and retryable: leaving it
+                // PENDING shows "downloading" forever, with no retry control
+                // (the UI offers one only for FAILED).
                 Diag.e(TAG, "mms download result handling failed", e, id("message", messageId), count("attempt", attempt))
+                runCatching { messageDao.setMmsStatus(messageId, MmsStatus.FAILED) }
             } finally {
                 pendingResult.finish()
             }

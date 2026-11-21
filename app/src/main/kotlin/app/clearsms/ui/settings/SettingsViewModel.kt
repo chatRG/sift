@@ -820,8 +820,13 @@ class SettingsViewModel
             launchIo {
                 busy.value = true
                 try {
-                    context.contentResolver.openOutputStream(uri)?.use { backupManager.exportTo(it) }
-                    events.emit(SettingsEvent.BackupDone)
+                    // A null stream means the document could not be opened at
+                    // all (the provider returned nothing). Reporting "Backup
+                    // done" then would leave the user with no file and no
+                    // warning, so it is a failure like any other.
+                    val written =
+                        context.contentResolver.openOutputStream(uri)?.use { backupManager.exportTo(it) } != null
+                    events.emit(if (written) SettingsEvent.BackupDone else SettingsEvent.BackupFailed)
                 } catch (e: Exception) {
                     // BackupManager logs its own progress; a failure to even
                     // open the chosen document (SAF) would otherwise leave
@@ -862,8 +867,11 @@ class SettingsViewModel
             launchIo {
                 busy.value = true
                 try {
-                    context.contentResolver.openOutputStream(uri)?.use { settingsBackupManager.exportTo(it) }
-                    events.emit(SettingsEvent.SettingsBackupDone)
+                    // As in backupTo: a null stream is a failed backup, never a
+                    // silent "done" with no file behind it.
+                    val written =
+                        context.contentResolver.openOutputStream(uri)?.use { settingsBackupManager.exportTo(it) } != null
+                    events.emit(if (written) SettingsEvent.SettingsBackupDone else SettingsEvent.SettingsBackupFailed)
                 } catch (e: Exception) {
                     Diag.e(TAG, "manual backup failed", e, flag("settings", true))
                     events.emit(SettingsEvent.SettingsBackupFailed)

@@ -1,6 +1,7 @@
 package app.clearsms.data.rules
 
 import app.clearsms.data.db.RuleEntity
+import app.clearsms.domain.parser.GuardLibrary
 import kotlinx.serialization.json.Json
 
 /**
@@ -8,10 +9,18 @@ import kotlinx.serialization.json.Json
  *
  * Imported rules are persisted and then evaluated against EVERY incoming
  * message, so this is the trust boundary for community/user rule content:
- * documents with too many rules, oversized patterns, or patterns wrapped in a
- * leading `.*`/`[\s\S]*` (a known catastrophic-backtracking shape that is also
- * redundant, since the engine already searches anywhere in the body) are
- * rejected with a descriptive error before anything reaches the database.
+ * documents with too many rules are rejected, and every regex pattern is run
+ * through [GuardLibrary.validate] - the SAME load-time discipline the bundled
+ * guard library and parser tables get: an oversized pattern, a leading or
+ * trailing `.*`/`[\s\S]*` wrapper, a nested unbounded quantifier (the classic
+ * `(a+)+` explosion) or a variable-length lookbehind is refused with a
+ * descriptive error before anything reaches the database. A blank pattern is
+ * refused too: an empty regex matches every message, so a rule carrying one
+ * would swallow the whole inbox into its category.
+ *
+ * The engine's per-message budget cannot interrupt a single running
+ * [Regex.find], so rejecting the shapes up front is what actually keeps a
+ * pathological imported rule from stalling ingestion.
  */
 class RuleImporter(
     private val json: Json,
@@ -44,28 +53,15 @@ class RuleImporter(
         pattern: String?,
     ) {
         if (pattern == null) return
-        require(pattern.length <= MAX_PATTERN_LENGTH) {
-            "Rule '$ruleId': pattern is ${pattern.length} characters (maximum $MAX_PATTERN_LENGTH)"
-        }
-        require(!LEADING_WRAPPER.containsMatchIn(pattern)) {
-            "Rule '$ruleId': pattern must not start with '.*' or '[\\s\\S]*' - " +
-                "matching already searches anywhere in the message, and such wrappers " +
-                "cause catastrophic regex backtracking"
-        }
+        val reason = GuardLibrary.validate(pattern)
+        if (reason != null) throw IllegalArgumentException("Rule '$ruleId': $reason")
     }
 
     companion object {
         /** Upper bound on rules per imported document. */
         const val MAX_RULES_PER_IMPORT = 200
 
-        /** Upper bound on a single regex pattern's length. */
-        const val MAX_PATTERN_LENGTH = 512
-
-        /**
-         * A `.*` / `.+` / `[\s\S]*` style wrapper at the very start of the
-         * pattern (optionally after inline flag groups like `(?i)`).
-         */
-        private val LEADING_WRAPPER =
-            Regex("""^(?:\(\?[a-zA-Z]+\))*(?:\.[*+]|\[\\s\\S\][*+]|\[\\S\\s\][*+])""")
+        /** Upper bound on a single regex pattern's length; the shared validator's cap. */
+        const val MAX_PATTERN_LENGTH = GuardLibrary.MAX_PATTERN_LENGTH
     }
 }

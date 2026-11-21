@@ -51,23 +51,8 @@ class MessageCategorizer(
         // which turns even mildly backtracking patterns into a denial of
         // service. The full body is still stored and displayed unchanged.
         val evalBody = body.take(MAX_EVAL_BODY_LENGTH)
-        return normalizeInformational(
-            enforceInvariants(sender, evalBody, anchor, rawCategorize(sender, evalBody, userRules, builtinRules, anchor)),
-        )
+        return enforceInvariants(sender, evalBody, anchor, rawCategorize(sender, evalBody, userRules, builtinRules, anchor))
     }
-
-    /**
-     * Final post-condition: no result ever leaves the categorizer as
-     * [Category.IMPORTANT] with their sub-category preserved - there is no
-     * notices (travel/PNR, appointment tokens, credit-score checks,
-     * broker/exchange statements, UPI-mandate lifecycle) are IMPORTANT now,
-     * keeping their sub-category so downstream meaning is unchanged. This also
-     * normalizes bundled or user rules whose action still says
-     * `category: informational` without touching the rule documents, and it
-     * runs LAST so the mandate carve-out in [enforceInvariants] keeps blocking
-     * the transaction promotion before the fold happens.
-     */
-    private fun normalizeInformational(result: CategorizationResult): CategorizationResult = result
 
     private fun rawCategorize(
         sender: String,
@@ -155,7 +140,7 @@ class MessageCategorizer(
      *   not carry it, so invariant 5 still applies to it.
      * - UPI-mandate lifecycle notices (created / cancelled) carry an amount
      *   but move no money; they must never be promoted AS a transaction. They
-     *   surface as IMPORTANT bank alerts via [normalizeInformational].
+     *   surface as IMPORTANT bank alerts (the payment-request carve-out below).
      */
     private fun enforceInvariants(
         sender: String,

@@ -74,4 +74,40 @@ class RuleImporterTest {
         val rows = importer.import(document(rule("ok-2", """(?i)debited[\s\S]{0,40}?account""")))
         assertThat(rows).hasSize(1)
     }
+
+    @Test
+    fun `pattern with a trailing dot-star wrapper is rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            importer.import(document(rule("bad-4", "(?i)sale.*")))
+        }
+    }
+
+    @Test
+    fun `pattern with a nested unbounded quantifier is rejected`() {
+        // The classic (a+)+ explosion: accepted by the old length/wrapper-only
+        // check, and unbounded by the engine's budget because a single
+        // Regex.find cannot be interrupted.
+        val e =
+            assertThrows(IllegalArgumentException::class.java) {
+                importer.import(document(rule("bad-5", "^(a+)+$")))
+            }
+        assertThat(e).hasMessageThat().contains("bad-5")
+        assertThat(e).hasMessageThat().contains("nested unbounded quantifier")
+    }
+
+    @Test
+    fun `pattern with a variable-length lookbehind is rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            importer.import(document(rule("bad-6", "(?<=ab+)cd")))
+        }
+    }
+
+    @Test
+    fun `blank pattern is rejected because it matches every message`() {
+        val e =
+            assertThrows(IllegalArgumentException::class.java) {
+                importer.import(document(rule("bad-7", "")))
+            }
+        assertThat(e).hasMessageThat().contains("bad-7")
+    }
 }

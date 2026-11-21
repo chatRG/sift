@@ -11,6 +11,7 @@ import app.clearsms.data.prefs.SettingsRepository
 import app.clearsms.receiver.ReminderAlarmReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,8 +41,16 @@ class ReminderAlarmScheduler
          * [app.clearsms.ui.settings.SettingsViewModel] pairs the toggle with
          * [cancelUpcoming] / [rescheduleAll]; the notifier's own gate covers
          * any alarm that still slips through the race.
+         *
+         * Bounded: this runs on the SMS receive path, where a cold DataStore
+         * collector can wait on a concurrent write (the hazard documented in
+         * DiModule's `hotGate`). An unbounded `.first()` here would stall
+         * ingestion and the broadcast's finish() behind a settings write; a
+         * read that cannot answer within [GATE_READ_TIMEOUT_MS] falls back to
+         * the settings default (on) instead.
          */
-        private suspend fun alertsEnabled(): Boolean = settingsRepository.enabledSections.first().alerts
+        private suspend fun alertsEnabled(): Boolean =
+            withTimeoutOrNull(GATE_READ_TIMEOUT_MS) { settingsRepository.enabledSections.first().alerts } ?: true
 
         /** Schedules the alarm for the reminder extracted from [messageId], if any. */
         suspend fun scheduleForMessage(messageId: Long) {
@@ -49,7 +58,7 @@ class ReminderAlarmScheduler
             reminderDao.findByRawSmsId(messageId)?.let { schedule(it) }
         }
 
-        /** Re-registers alarms for every upcoming reminder (after boot). */
+        /** Re-registers alarms for every upcoming reminder (after boot, an import or a re-sort). */
         suspend fun rescheduleAll() {
             if (!alertsEnabled()) return
             val now = System.currentTimeMillis()
@@ -95,13 +104,23 @@ class ReminderAlarmScheduler
                     .putExtra(ReminderAlarmReceiver.EXTRA_TOTAL_DUE, reminder.totalDue ?: Double.NaN)
             return PendingIntent.getBroadcast(
                 context,
-                reminder.id.toInt(),
+                // Keyed on the SOURCE MESSAGE, not the reminder row id: a
+                // re-sort deletes and re-inserts reminders with new ids, and
+                // an id-keyed alarm would then survive unreachable (cancel
+                // and re-arm both compute the new id) while carrying the old
+                // amount. The raw message id is stable for the same bill, so
+                // re-arming REPLACES that bill's alarm instead of stacking a
+                // second one, and cancelUpcoming can still address it.
+                reminder.rawSmsId.toInt(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
         }
 
         companion object {
+            /** Upper bound on the Alerts-gate settings read on the receive path. */
+            private const val GATE_READ_TIMEOUT_MS = 500L
+
             /**
              * The alarm fires one day before the due date (at the same
              * start-of-day instant). Returns null when that moment has

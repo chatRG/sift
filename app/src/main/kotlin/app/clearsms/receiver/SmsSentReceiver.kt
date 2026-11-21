@@ -72,6 +72,13 @@ class SmsSentReceiver : BroadcastReceiver() {
         receiverScope.launch {
             try {
                 recorder.record(report, acknowledgedAtMs)
+            } catch (e: Exception) {
+                // A report about a message that is already stored must never
+                // crash the default SMS app: this scope has no exception
+                // handler, so a throw here (a full disk mid-write, a closed
+                // database during a restore) would reach the thread's default
+                // handler and kill the process.
+                Diag.e(TAG, "sms send report handling failed", e)
             } finally {
                 pending.finish()
             }

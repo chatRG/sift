@@ -38,8 +38,13 @@ data class BackupDocument(
          * Current backup document format. Bump when the document shape
          * changes incompatibly; restore rejects documents newer than this
          * and migrates (or defaults) older ones in [BackupManager.importFrom].
+         *
+         * 1 = messages, accounts, transactions, user rules, reminders.
+         * 2 = adds `isOutgoing` and `dateSentMs` to a message. A format-1
+         *     file restores unchanged; its messages come back as received
+         *     because a format-1 file never recorded direction.
          */
-        const val FORMAT_VERSION = 1
+        const val FORMAT_VERSION = 2
     }
 }
 
@@ -58,6 +63,18 @@ data class MessageBackup(
     val extractedOtp: String? = null,
     val extractedDataJson: String? = null,
     val isBlockedSender: Boolean = false,
+    /**
+     * Direction of the message: true for a message the user sent. Absent in
+     * format-1 files (they predate the field), which restore as received -
+     * the only thing a format-1 file ever recorded.
+     */
+    val isOutgoing: Boolean = false,
+    /**
+     * The sender's network timestamp (provider DATE_SENT) on a received
+     * message; null when the network reported none. Drives the sent-time
+     * ordering, so a restore must keep it.
+     */
+    val dateSentMs: Long? = null,
 )
 
 @Serializable
@@ -170,6 +187,11 @@ internal fun MessageEntity.toBackup() =
         extractedOtp,
         extractedDataJson,
         isBlockedSender,
+        // Direction and the sender's own timestamp: without them every
+        // restored message came back as RECEIVED - the user's own sent
+        // messages displayed as if the other party had written them.
+        isOutgoing,
+        dateSent,
     )
 
 internal fun MessageBackup.toEntity(issues: RestoreIssues) =
@@ -187,6 +209,10 @@ internal fun MessageBackup.toEntity(issues: RestoreIssues) =
         extractedOtp = extractedOtp,
         extractedDataJson = extractedDataJson,
         isBlockedSender = isBlockedSender,
+        isOutgoing = isOutgoing,
+        // A sent row's send time IS its timestamp; the network timestamp only
+        // means something on a received row (same rule the importer applies).
+        dateSent = if (isOutgoing) null else dateSentMs,
     )
 
 internal fun AccountEntity.toBackup() =

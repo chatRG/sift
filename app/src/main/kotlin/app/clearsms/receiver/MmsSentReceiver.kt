@@ -66,11 +66,22 @@ class MmsSentReceiver : BroadcastReceiver() {
         val succeeded = resultCode == Activity.RESULT_OK
         val failureReason =
             if (succeeded) null else SendFailureReason.fromMmsResultCode(resultCode)
-        MmsSendReport.of(intent, resultCode, failureReason, subscriptionSource).log(messageId)
         val pending = goAsync()
         receiverScope.launch {
             try {
+                // Built here, not in onReceive: the report resolves the
+                // sending SIM through the telephony services (cross-process
+                // binder calls) purely for its diagnostic line, which must not
+                // hold up the broadcast queue on the main thread.
+                MmsSendReport.of(intent, resultCode, failureReason, subscriptionSource).log(messageId)
                 recorder.record(messageId, destination, succeeded, failureReason)
+            } catch (e: Exception) {
+                // Same rule as the SMS report receiver: a failure while
+                // recording a report (disk full, database closed mid-restore)
+                // must be logged, never thrown into a scope with no handler -
+                // that would crash the default SMS app from a report about a
+                // message the user can still see.
+                Diag.e(TAG, "mms send report handling failed", e)
             } finally {
                 pending.finish()
             }
@@ -81,6 +92,8 @@ class MmsSentReceiver : BroadcastReceiver() {
         const val ACTION_MMS_SENT = "app.clearsms.action.MMS_SENT"
         const val EXTRA_MESSAGE_ID = "message_id"
         const val EXTRA_DESTINATION = "destination"
+
+        private const val TAG = "MmsSent"
 
         /** The subscription the send was handed over with; [SubscriptionManager.INVALID_SUBSCRIPTION_ID] for the system default. */
         const val EXTRA_SUBSCRIPTION_ID = "subscription_id"

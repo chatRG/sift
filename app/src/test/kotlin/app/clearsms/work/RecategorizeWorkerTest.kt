@@ -22,6 +22,7 @@ import app.clearsms.data.repository.RecategorizeCheckpoint
 import app.clearsms.data.repository.RecategorizeCheckpointStore
 import app.clearsms.domain.model.Category
 import app.clearsms.domain.model.MessageSortOrder
+import app.clearsms.testing.FakeReminderDao
 import app.clearsms.testing.FakeSettingsRepository
 import app.clearsms.testing.InMemoryPreferencesDataStore
 import com.google.common.truth.Truth.assertThat
@@ -51,6 +52,9 @@ class RecategorizeWorkerTest {
 
     /** The worker's durable re-sort checkpoint, on an in-memory store. */
     private val checkpoints = RecategorizeCheckpointPrefs(InMemoryPreferencesDataStore())
+
+    /** Re-armed after a completed pass; no reminders exist in this test. */
+    private lateinit var reminderAlarmScheduler: ReminderAlarmScheduler
 
     /** Gate released by the test; until then the fake re-sort stays RUNNING. */
     private val gate = CompletableDeferred<Unit>()
@@ -222,6 +226,7 @@ class RecategorizeWorkerTest {
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
+        reminderAlarmScheduler = ReminderAlarmScheduler(context, FakeReminderDao(), fakeSettings)
         val config =
             Configuration
                 .Builder()
@@ -231,7 +236,7 @@ class RecategorizeWorkerTest {
                             appContext: Context,
                             workerClassName: String,
                             workerParameters: WorkerParameters,
-                        ): ListenableWorker = RecategorizeWorker(appContext, workerParameters, fakeRepository, fakeSettings, checkpoints)
+                        ): ListenableWorker = RecategorizeWorker(appContext, workerParameters, fakeRepository, fakeSettings, checkpoints, reminderAlarmScheduler)
                     },
                 ).build()
         WorkManagerTestInitHelper.initializeTestWorkManager(context, config)
@@ -320,7 +325,7 @@ class RecategorizeWorkerTest {
                             appContext: Context,
                             workerClassName: String,
                             workerParameters: WorkerParameters,
-                        ): ListenableWorker = RecategorizeWorker(appContext, workerParameters, fakeRepository, fakeSettings, checkpoints)
+                        ): ListenableWorker = RecategorizeWorker(appContext, workerParameters, fakeRepository, fakeSettings, checkpoints, reminderAlarmScheduler)
                     },
                 ).build()
         return runBlocking { worker.doWork() }

@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.telephony.SmsManager
+import androidx.core.net.toUri
 import app.clearsms.data.db.DeliveryStatus
 import app.clearsms.data.db.MessageDao
 import app.clearsms.data.db.MessageEntity
@@ -164,7 +165,7 @@ class SmsSender
                 val sentIntents =
                     ArrayList<PendingIntent>(parts.size).apply {
                         repeat(parts.size) { index ->
-                            add(partPendingIntent(SmsSentReceiver.ACTION_SMS_SENT, destination, providerUri, index, parts.size))
+                            add(partPendingIntent(messageId, SmsSentReceiver.ACTION_SMS_SENT, destination, providerUri, index, parts.size))
                         }
                     }
                 val deliveredIntents =
@@ -173,6 +174,7 @@ class SmsSender
                             add(
                                 if (requestDeliveryReports) {
                                     partPendingIntent(
+                                        messageId,
                                         SmsSentReceiver.ACTION_SMS_DELIVERED,
                                         destination,
                                         providerUri,
@@ -241,6 +243,7 @@ class SmsSender
         }
 
         private fun partPendingIntent(
+            messageId: Long,
             action: String,
             destination: String,
             providerUri: String?,
@@ -250,6 +253,16 @@ class SmsSender
             val intent =
                 Intent(context, SmsSentReceiver::class.java)
                     .setAction(action)
+                    // The DATA is what makes this report intent distinct: the
+                    // platform matches a PendingIntent on action/data/type/
+                    // component, NEVER on extras, and the request code below
+                    // restarts with the process. Without a unique data URI,
+                    // the first send after a restart could reuse the
+                    // still-pending intent of an earlier message and its
+                    // report would be recorded against THAT message (which
+                    // then sticks at Sending while the new one silently
+                    // inherits the status).
+                    .setData("sift-sms-report://$messageId/$action/$partIndex".toUri())
                     .putExtra(SmsSentReceiver.EXTRA_DESTINATION, destination)
                     .putExtra(SmsSentReceiver.EXTRA_PROVIDER_URI, providerUri)
                     .putExtra(SmsSentReceiver.EXTRA_PART_INDEX, partIndex)

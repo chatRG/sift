@@ -69,6 +69,7 @@ class RecategorizeWorker
         private val messageRepository: MessageRepository,
         private val settings: SettingsRepository,
         private val checkpoints: RecategorizeCheckpointPrefs,
+        private val reminderAlarmScheduler: ReminderAlarmScheduler,
     ) : CoroutineWorker(appContext, params) {
         override suspend fun doWork(): Result {
             Channels.ensureCreated(applicationContext)
@@ -92,6 +93,13 @@ class RecategorizeWorker
                 // the auto re-sort never re-fires for a version whose full
                 // pass already completed.
                 settings.setLastSortedVersionCode(BuildConfig.VERSION_CODE)
+                // The pass deleted and re-inserted every derived reminder, so
+                // the alarms registered for the old rows now carry stale data
+                // and cannot be cancelled by id. Re-arm from the rows that
+                // exist now (keyed on the source message, so each replaces
+                // its predecessor).
+                runCatching { reminderAlarmScheduler.rescheduleAll() }
+                    .onFailure { Diag.w(TAG, "reminder re-arm after re-sort failed", it) }
                 Diag.i(TAG, "re-sort finished", count("messages", count))
                 Result.success(workDataOf(OUTPUT_COUNT to count))
             } catch (e: CancellationException) {

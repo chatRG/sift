@@ -118,8 +118,9 @@ class BackupManager(
         require(document.formatVersion >= 1) {
             "Not a valid backup file (format ${document.formatVersion})"
         }
-        // Format 1 is the only released format so far; when FORMAT_VERSION is
-        // bumped, migrate older documents here before mapping.
+        // Format 1 lacked the message direction (`isOutgoing`/`dateSentMs`);
+        // its defaults are exactly what that format recorded - received, with
+        // no sender timestamp - so no field rewrite is needed here.
 
         // Map everything up front - validation failures happen with the
         // database untouched.

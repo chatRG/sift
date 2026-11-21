@@ -57,6 +57,7 @@ class InitialSyncWorker
         private val settings: SettingsRepository,
         private val simBackfill: SimBackfill,
         private val sentTimeBackfill: SentTimeBackfill,
+        private val reminderAlarmScheduler: ReminderAlarmScheduler,
     ) : CoroutineWorker(appContext, params) {
         override suspend fun doWork(): Result {
             Channels.ensureCreated(applicationContext)
@@ -101,6 +102,13 @@ class InitialSyncWorker
                     count("imported", mmsResult.imported),
                     count("skipped", mmsResult.skipped),
                 )
+                // Reminders derived by the import have no alarm yet: the live
+                // receive path is the only other place that arms one, and it
+                // never sees imported history. Without this, every bill that
+                // arrived before the app was installed (or while it was not
+                // the default SMS app) silently never reminds.
+                runCatching { reminderAlarmScheduler.rescheduleAll() }
+                    .onFailure { Diag.w(TAG, "reminder re-arm after import failed", it) }
                 // The INITIAL import classified the whole history with the
                 // current rules - record this version as fully sorted so the
                 // automatic post-update re-sort never runs redundantly on a

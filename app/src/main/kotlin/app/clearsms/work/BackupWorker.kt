@@ -24,15 +24,11 @@ import java.util.concurrent.TimeUnit
 /**
  * Periodic local backup into the directory the user chose via SAF when
  * enabling the backup frequency (a persisted `ACTION_OPEN_DOCUMENT_TREE`
- * grant). Each run writes BOTH exports under stable names, overwriting the
- * previous copies:
- *
- * - `clearsms-backup-messages-<yyyyMMddHHmm>.json` ([BackupManager])
- * - `clearsms-backup-settings-<yyyyMMddHHmm>.json` ([SettingsBackupManager])
- *
- * Timestamped names never overwrite each other; after a successful run the
- * worker prunes each kind down to the [KEEP_PER_KIND] newest files so the
- * folder cannot grow without bound.
+ * grant). Each run writes BOTH exports under timestamped names
+ * (`clearsms-backup-messages-<yyyyMMddHHmm>.json` and
+ * `clearsms-backup-settings-<yyyyMMddHHmm>.json`), so a run never overwrites
+ * the previous copy; after a successful run the worker prunes each kind down
+ * to the [KEEP_PER_KIND] newest files so the folder cannot grow without bound.
  *
  * Nothing is uploaded anywhere. The frequency setting cannot reach
  * DAILY/WEEKLY without a granted directory (Settings gates it), so a missing
@@ -90,16 +86,24 @@ class BackupWorker
             val otpCutoffMs = OtpAutoDeleteWorker.cutoffFor(otpPolicy, now)
 
             return try {
+                // Each document is opened, written and closed before the next
+                // one: opening both up front leaked the settings stream (never
+                // closed) whenever the messages export threw, and left an
+                // empty timestamped settings file behind on every retry.
                 val messagesOut = store.openForWrite(BackupFileNames.autoMessages(now))
-                val settingsOut = messagesOut?.let { store.openForWrite(BackupFileNames.autoSettings(now)) }
-                if (messagesOut == null || settingsOut == null) {
-                    messagesOut?.close()
+                if (messagesOut == null) {
                     // Directory deleted or permission revoked: fail (don't
                     // retry into the same wall) and surface the fix in Settings.
                     uiPrefs.setBackupDirectoryError(true)
                     return Result.failure()
                 }
                 messagesOut.use { backupManager.exportTo(it, otpCutoffMs = otpCutoffMs) }
+
+                val settingsOut = store.openForWrite(BackupFileNames.autoSettings(now))
+                if (settingsOut == null) {
+                    uiPrefs.setBackupDirectoryError(true)
+                    return Result.failure()
+                }
                 settingsOut.use { settingsBackupManager.exportTo(it) }
                 uiPrefs.setBackupDirectoryError(false)
                 uiPrefs.setLastAutoBackupMs(now)
